@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — CareerPath AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--p:#4f46e5;--pd:#3730a3;--ac:#06b6d4;--bg:#f0f4ff;--tx:#1e1b4b;--mu:#6b7280;--ok:#10b981;--err:#ef4444;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+  background-image:radial-gradient(circle at 10% 10%,#c7d2fe 0%,transparent 40%),
+                   radial-gradient(circle at 90% 85%,#a5f3fc 0%,transparent 40%);}
+
+/* LOGIN */
+#loginGate{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.lcard{background:#fff;border-radius:28px;padding:52px 44px;max-width:420px;width:100%;
+  box-shadow:0 24px 70px rgba(79,70,229,.16);text-align:center;}
+.lcard .lk{font-size:3.8rem;margin-bottom:14px;display:block;
+  animation:lkIn .8s cubic-bezier(.34,1.56,.64,1) forwards;}
+@keyframes lkIn{0%{transform:scale(0) rotate(-20deg);}100%{transform:scale(1) rotate(0);}}
+.lcard h2{font-family:'Sora',sans-serif;font-size:1.85rem;font-weight:800;color:var(--tx);margin-bottom:4px;}
+.lcard .sub{color:var(--mu);font-size:.9rem;margin-bottom:26px;}
+
+.field{margin-bottom:13px;text-align:left;}
+.field label{display:block;font-size:.82rem;font-weight:600;color:var(--tx);margin-bottom:5px;}
+.field input{width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:13px;font-size:.95rem;font-family:inherit;outline:none;transition:border .2s;}
+.field input:focus{border-color:var(--p);}
+.btn-login{width:100%;padding:14px;background:linear-gradient(135deg,var(--p),#7c3aed);color:#fff;border:none;border-radius:13px;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;transition:.2s;margin-top:4px;}
+.btn-login:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 24px rgba(79,70,229,.38);}
+.err-msg{margin-top:10px;font-size:.85rem;font-weight:600;color:var(--err);min-height:18px;}
+.back-a{display:block;margin-top:16px;font-size:.85rem;color:var(--p);text-decoration:none;font-weight:600;}
+.back-a:hover{text-decoration:underline;}
+
+/* PANEL */
+#adminPanel{display:none;padding:28px 20px;max-width:1080px;margin:0 auto;}
+.topbar{display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:16px;padding:14px 24px;margin-bottom:26px;box-shadow:0 4px 20px rgba(0,0,0,.06);}
+.t-logo{font-family:'Sora',sans-serif;font-weight:800;color:var(--p);font-size:1.05rem;}
+.t-right{display:flex;gap:12px;align-items:center;}
+.t-badge{background:#1e1b4b;color:#fff;padding:4px 14px;border-radius:99px;font-size:.74rem;font-weight:700;}
+.t-lnk{color:var(--p);font-size:.84rem;font-weight:600;text-decoration:none;}
+.t-lnk:hover{text-decoration:underline;}
+.t-out{background:none;border:none;color:var(--err);font-size:.84rem;font-weight:600;cursor:pointer;font-family:inherit;}
+.t-out:hover{text-decoration:underline;}
+.greet{background:linear-gradient(135deg,#1e1b4b,#4f46e5,#7c3aed);border-radius:22px;padding:28px 36px;color:#fff;margin-bottom:26px;position:relative;overflow:hidden;}
+.greet::after{content:'🔐';position:absolute;right:28px;bottom:-10px;font-size:6rem;opacity:.1;pointer-events:none;}
+.greet h1{font-family:'Sora',sans-serif;font-size:1.55rem;font-weight:800;margin-bottom:4px;}
+.greet p{font-size:.9rem;opacity:.78;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px;}
+@media(max-width:640px){.stats{grid-template-columns:1fr 1fr;}}
+.sc{background:#fff;border-radius:16px;padding:20px 18px;text-align:center;box-shadow:0 6px 24px rgba(79,70,229,.08);}
+.sc .n{font-family:'Sora',sans-serif;font-size:2rem;font-weight:800;color:var(--p);}
+.sc .l{font-size:.74rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;margin-top:4px;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:26px;}
+@media(max-width:680px){.two{grid-template-columns:1fr;}}
+.pc{background:#fff;border-radius:20px;padding:24px 26px;box-shadow:0 8px 30px rgba(79,70,229,.08);}
+.pc h3{font-family:'Sora',sans-serif;font-size:.97rem;font-weight:700;color:var(--tx);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+.add-form{display:flex;flex-direction:column;gap:10px;}
+.add-form input{padding:11px 14px;border:2px solid #e5e7eb;border-radius:12px;font-size:.9rem;font-family:inherit;outline:none;transition:border .2s;}
+.add-form input:focus{border-color:var(--p);}
+.btn-add{background:var(--p);color:#fff;border:none;border-radius:12px;padding:12px;font-size:.9rem;font-weight:700;font-family:inherit;cursor:pointer;transition:.2s;}
+.btn-add:hover{background:var(--pd);}
+.add-msg{font-size:.82rem;font-weight:600;min-height:16px;}
+.add-msg.ok{color:var(--ok);}.add-msg.er{color:var(--err);}
+.srch input{width:100%;padding:11px 14px;border:2px solid #e5e7eb;border-radius:12px;font-size:.9rem;font-family:inherit;outline:none;transition:border .2s;}
+.srch input:focus{border-color:var(--p);}
+.srch-ct{margin-top:8px;font-size:.8rem;color:var(--mu);}
+.s-list{display:flex;flex-direction:column;gap:9px;max-height:440px;overflow-y:auto;margin-top:4px;}
+.s-list::-webkit-scrollbar{width:4px;}
+.s-list::-webkit-scrollbar-thumb{background:#e0e0f0;border-radius:4px;}
+.si{display:flex;align-items:center;gap:12px;padding:13px 14px;background:#f9fafb;border-radius:13px;border:1.5px solid #e5e7eb;transition:.2s;cursor:pointer;}
+.si:hover{border-color:var(--p);background:#faf5ff;}
+.si-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--ac));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.82rem;flex-shrink:0;}
+.si-inf{flex:1;}
+.si-nm{font-size:.9rem;font-weight:700;color:var(--tx);}
+.si-st{font-size:.74rem;color:var(--mu);margin-top:2px;}
+.si-acts{display:flex;gap:6px;}
+.bv{background:#ede9fe;color:var(--p);border:none;border-radius:8px;padding:6px 13px;font-size:.75rem;font-weight:700;font-family:inherit;cursor:pointer;transition:.2s;}
+.bv:hover{background:var(--p);color:#fff;}
+.br{background:#fee2e2;color:var(--err);border:none;border-radius:8px;padding:6px 13px;font-size:.75rem;font-weight:700;font-family:inherit;cursor:pointer;transition:.2s;}
+.br:hover{background:var(--err);color:#fff;}
+.no-s{text-align:center;padding:28px;color:var(--mu);font-size:.88rem;}
+.no-s span{font-size:2rem;display:block;margin-bottom:8px;}
+
+/* MODAL */
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(5px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;}
+.mov.open{display:flex;}
+.modal{background:#fff;border-radius:24px;padding:32px;max-width:660px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 28px 80px rgba(0,0,0,.22);animation:mIn .32s cubic-bezier(.34,1.4,.64,1);}
+@keyframes mIn{from{opacity:0;transform:scale(.93);}to{opacity:1;transform:scale(1);}}
+.modal::-webkit-scrollbar{width:4px;}
+.modal::-webkit-scrollbar-thumb{background:#e0e0f0;border-radius:4px;}
+.mh{display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:16px;border-bottom:1.5px solid #f3f4f6;}
+.m-av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--ac));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.1rem;flex-shrink:0;}
+.mh h2{font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;color:var(--tx);}
+.mh .ms{font-size:.82rem;color:var(--mu);margin-top:2px;}
+.mc{margin-left:auto;background:#f3f4f6;border:none;border-radius:50%;width:34px;height:34px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s;}
+.mc:hover{background:#e5e7eb;}
+.ts{margin-bottom:16px;padding:18px 20px;background:#f9fafb;border-radius:16px;border:1.5px solid #e5e7eb;}
+.ts h4{font-family:'Sora',sans-serif;font-size:.88rem;font-weight:700;color:var(--tx);margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.bd{background:#d1fae5;color:#065f46;padding:3px 10px;border-radius:99px;font-size:.7rem;font-weight:700;}
+.bp{background:#fef3c7;color:#92400e;padding:3px 10px;border-radius:99px;font-size:.7rem;font-weight:700;}
+.tpill{display:inline-block;background:linear-gradient(135deg,var(--p),var(--ac));color:#fff;padding:5px 14px;border-radius:99px;font-size:.78rem;font-weight:700;margin-bottom:10px;}
+.tr{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
+.tl{width:115px;font-size:.78rem;font-weight:600;color:var(--tx);flex-shrink:0;}
+.tbw{flex:1;background:#e5e7eb;border-radius:99px;height:7px;}
+.tb{height:7px;border-radius:99px;background:linear-gradient(90deg,var(--p),var(--ac));}
+.tp{width:32px;text-align:right;font-size:.75rem;font-weight:700;color:var(--p);}
+.nd{color:var(--mu);font-size:.83rem;}
+.sr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f3f4f6;font-size:.85rem;}
+.sr:last-child{border-bottom:none;font-weight:700;}
+.spill{background:#ede9fe;color:var(--p);padding:2px 10px;border-radius:99px;font-size:.78rem;font-weight:700;}
+.m-del{width:100%;margin-top:18px;background:#fee2e2;color:var(--err);border:none;border-radius:13px;padding:13px;font-size:.9rem;font-weight:700;font-family:inherit;cursor:pointer;transition:.2s;}
+.m-del:hover{background:var(--err);color:#fff;}
+@keyframes fu{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.fu{animation:fu .4s ease forwards;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginGate">
+  <div class="lcard fu">
+    <span class="lk">🔐</span>
+    <h2>Admin Login</h2>
+    <p class="sub">CareerPath AI — Admin Panel</p>
+
+    <div class="field">
+      <label>Username</label>
+      <input type="text" id="ad-u" placeholder="Enter admin username" onkeydown="if(event.key==='Enter')adminLogin()"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="ad-p" placeholder="Enter password" onkeydown="if(event.key==='Enter')adminLogin()"/>
+    </div>
+    <button class="btn-login" onclick="adminLogin()">Login to Admin Panel →</button>
+    <div class="err-msg" id="ad-err"></div>
+    <a href="{% url 'index' %}" class="back-a">← Back to Home</a>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel">
+  <div class="topbar">
+    <span class="t-logo">🎯 CareerPath AI</span>
+    <div class="t-right">
+      <span class="t-badge">🔐 Admin</span>
+      <a href="{% url 'index' %}" class="t-lnk">🏠 Home</a>
+      <button class="t-out" onclick="adminLogout()">Logout</button>
+    </div>
+  </div>
+  <div class="greet fu">
+    <h1>Welcome, Admin! 👋</h1>
+    <p>Add students, view their test results, and remove accounts.</p>
+  </div>
+  <div class="stats fu">
+    <div class="sc"><div class="n" id="st-t">0</div><div class="l">Total Students</div></div>
+    <div class="sc"><div class="n" id="st-d">0</div><div class="l">All Tests Done</div></div>
+    <div class="sc"><div class="n" id="st-p">0</div><div class="l">In Progress</div></div>
+    <div class="sc"><div class="n" id="st-n">0</div><div class="l">Not Started</div></div>
+  </div>
+  <div class="pc fu" style="margin-bottom:26px;">
+    <h3>🔍 Search Students</h3>
+    <div class="srch" style="display:flex;gap:10px;align-items:center;">
+      <input type="text" id="srch" placeholder="Enter username..." onkeydown="if(event.key==='Enter')doSearch()" style="flex:1;"/>
+      <button onclick="doSearch()" style="padding:11px 20px;background:var(--p);color:#fff;border:none;border-radius:12px;font-size:.9rem;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;" onmouseover="this.style.background='var(--pd)'" onmouseout="this.style.background='var(--p)'">Search</button>
+    </div>
+    <div class="srch-ct" id="srch-ct" style="margin-top:12px;font-size:.9rem;font-weight:600;"></div>
+    <div class="s-list" id="sList" style="margin-top:8px;"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="mov" id="mOv" onclick="ovClose(event)">
+  <div class="modal">
+    <div class="mh">
+      <div class="m-av" id="m-av"></div>
+      <div><h2 id="m-nm"></h2><div class="ms" id="m-sb"></div></div>
+      <button class="mc" onclick="closeModal()">✕</button>
+    </div>
+    <div id="m-body"></div>
+    <button class="m-del" id="m-del">🗑️ Remove This Student</button>
+  </div>
+</div>
+
+<script>
+const AU='admin',AP='admin@123';
+
+function adminLogin(){
+  const u=document.getElementById('ad-u').value.trim();
+  const p=document.getElementById('ad-p').value.trim();
+  const e=document.getElementById('ad-err');
+  if(!u||!p){e.textContent='Please fill all fields!';return;}
+  if(u!==AU||p!==AP){e.textContent='❌ Invalid credentials!';return;}
+  sessionStorage.setItem('cp_admin','1');
+  document.getElementById('loginGate').style.display='none';
+  document.getElementById('adminPanel').style.display='block';
+  loadPanel();
+}
+
+function adminLogout(){
+  sessionStorage.removeItem('cp_admin');
+  document.getElementById('adminPanel').style.display='none';
+  document.getElementById('loginGate').style.display='flex';
+  document.getElementById('ad-u').value='';
+  document.getElementById('ad-p').value='';
+  document.getElementById('ad-err').textContent='';
+}
+
+function getStudents(){
+  const a=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.startsWith('cp_user_'))a.push(k.replace('cp_user_',''));
+  }
+  return a.sort();
+}
+function getScores(u){try{return JSON.parse(localStorage.getItem('cp_scores_'+u))||{};}catch{return{};}}
+function doneCount(sc){return['riasec','bigfive','aptitude'].filter(k=>sc[k]).length;}
+function ini(n){return n.slice(0,2).toUpperCase();}
+
+function loadPanel(){renderStats();renderList();}
+
+function renderStats(){
+  const all=getStudents();let d=0,p=0,n=0;
+  all.forEach(u=>{const c=doneCount(getScores(u));if(c===3)d++;else if(c>0)p++;else n++;});
+  document.getElementById('st-t').textContent=all.length;
+  document.getElementById('st-d').textContent=d;
+  document.getElementById('st-p').textContent=p;
+  document.getElementById('st-n').textContent=n;
+}
+
+function buildStudentHTML(u){
+  return `<div class="si">
+    <div class="si-av">${ini(u)}</div>
+    <div class="si-inf"><div class="si-nm">${u}</div></div>
+    <div class="si-acts">
+      <button class="bv" onclick="viewStudent('${u}')">👁 View</button>
+      <button class="br" onclick="removeStudent('${u}')">🗑 Remove</button>
+    </div>
+  </div>`;
+}
+
+function renderList(){
+  const el=document.getElementById('sList');
+  const all=getStudents();
+  if(!all.length){el.innerHTML='<div class="no-s"><span>👥</span>No students yet.</div>';return;}
+  el.innerHTML=all.map(buildStudentHTML).join('');
+}
+
+function doSearch(){
+  const q=(document.getElementById('srch')?.value||'').trim().toLowerCase();
+  const ct=document.getElementById('srch-ct');
+  const el=document.getElementById('sList');
+  if(!q){
+    ct.innerHTML='';
+    renderList();
+    return;
+  }
+  const all=getStudents().filter(u=>u.toLowerCase().includes(q));
+  if(!all.length){
+    ct.innerHTML='<span style="color:var(--err);">❌ Not Found</span>';
+    el.innerHTML='<div class="no-s"><span>👥</span>No students found.</div>';
+    return;
+  }
+  ct.innerHTML='<span style="color:var(--ok);">✅ Found '+all.length+' student'+(all.length!==1?'s':'')+'</span>';
+  el.innerHTML=all.map(buildStudentHTML).join('');
+}
+
+function addStudent(){
+  const u=document.getElementById('nu').value.trim();
+  const p=document.getElementById('np').value.trim();
+  const msg=document.getElementById('add-msg');
+  if(!u||!p){msg.className='add-msg er';msg.textContent='Fill both fields!';return;}
+  if(u.length<3){msg.className='add-msg er';msg.textContent='Username needs 3+ characters!';return;}
+  if(localStorage.getItem('cp_user_'+u)){msg.className='add-msg er';msg.textContent='Username already exists!';return;}
+  localStorage.setItem('cp_user_'+u,p);
+  document.getElementById('nu').value='';
+  document.getElementById('np').value='';
+  msg.className='add-msg ok';
+  msg.textContent=`✅ "${u}" added! They can now login and take tests.`;
+  setTimeout(()=>{msg.textContent='';},4000);
+  loadPanel();
+}
+
+function removeStudent(u){
+  document.getElementById('conf-uname').textContent=u;
+  document.getElementById('conf-yes').onclick=function(){
+    localStorage.removeItem('cp_user_'+u);
+    localStorage.removeItem('cp_scores_'+u);
+    localStorage.removeItem('cp_ts_'+u);
+    if(localStorage.getItem('cp_loggedIn_user')===u){
+      localStorage.removeItem('cp_loggedIn');
+      localStorage.removeItem('cp_loggedIn_user');
+    }
+    closeModal();
+    closeConfirm();
+    loadPanel();
+  };
+  document.getElementById('confOv').style.display='flex';
+}
+function closeConfirm(){
+  document.getElementById('confOv').style.display='none';
+  document.getElementById('conf-yes').onclick=null;
+}
+
+function viewStudent(u){
+  const sc=getScores(u),c=doneCount(sc);
+  document.getElementById('m-av').textContent=ini(u);
+  document.getElementById('m-nm').textContent=u;
+  document.getElementById('m-sb').textContent=c+' of 3 tests completed';
+  document.getElementById('m-del').onclick=()=>removeStudent(u);
+  document.getElementById('m-body').innerHTML=
+    buildTs('🔍 RIASEC Interest Test',sc.riasec)+
+    buildTs('🧠 Big Five Personality',sc.bigfive)+
+    buildApt(sc.aptitude)+
+    buildAc(sc.academic);
+  document.getElementById('mOv').classList.add('open');
+}
+
+function buildTs(title,data){
+  const b=data?'<span class="bd">✓ Done</span>':'<span class="bp">⏳ Pending</span>';
+  if(!data||!data.normalised)return`<div class="ts"><h4>${title} ${b}</h4><div class="nd">Not completed yet.</div></div>`;
+  const bars=Object.entries(data.normalised).sort((a,b)=>b[1]-a[1]).slice(0,5)
+    .map(([t,p])=>`<div class="tr"><div class="tl">${t}</div><div class="tbw"><div class="tb" style="width:${p}%"></div></div><div class="tp">${p}%</div></div>`).join('');
+  return`<div class="ts"><h4>${title} ${b}</h4><span class="tpill">🏆 Top: ${data.topTrait}</span>${bars}</div>`;
+}
+
+function buildApt(data){
+  const b=data?'<span class="bd">✓ Done</span>':'<span class="bp">⏳ Pending</span>';
+  if(!data||!data.normalised)return`<div class="ts"><h4>⚡ Aptitude Test ${b}</h4><div class="nd">Not completed yet.</div></div>`;
+  const sc=data.totalCorrect!==undefined?` | Score: ${data.totalCorrect}/${data.totalQ}`:'';
+  const bars=Object.entries(data.normalised).sort((a,b)=>b[1]-a[1])
+    .map(([t,p])=>`<div class="tr"><div class="tl">${t}</div><div class="tbw"><div class="tb" style="width:${p}%"></div></div><div class="tp">${p}%</div></div>`).join('');
+  return`<div class="ts"><h4>⚡ Aptitude Test ${b}</h4><span class="tpill">🏆 Top: ${data.topTrait}${sc}</span>${bars}</div>`;
+}
+
+function buildAc(data){
+  const b=data?'<span class="bd">✓ Done</span>':'<span class="bp">⏳ Pending</span>';
+  if(!data||!data.subjects)return`<div class="ts"><h4>📊 Academic Analysis ${b}</h4><div class="nd">No marks entered.</div></div>`;
+  const gr=data.avg>=90?'Outstanding 🌟':data.avg>=75?'Excellent 🎉':data.avg>=60?'Good 👍':data.avg>=50?'Average 📝':'Needs Improvement 💪';
+  const rows=data.subjects.map(s=>`<div class="sr"><span>${s.name}</span><span class="spill">${s.score}/100</span></div>`).join('');
+  return`<div class="ts"><h4>📊 Academic Analysis ${b}</h4>
+    <span class="tpill">📊 Avg: ${data.avg}% — ${gr}</span>
+    <div style="margin-top:10px">${rows}<div class="sr"><span>Overall Average</span><span class="spill">${data.avg}/100</span></div></div></div>`;
+}
+
+function closeModal(){document.getElementById('mOv').classList.remove('open');}
+function ovClose(e){if(e.target===document.getElementById('mOv'))closeModal();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+window.addEventListener('DOMContentLoaded',()=>{
+  if(sessionStorage.getItem('cp_admin')==='1'){
+    document.getElementById('loginGate').style.display='none';
+    document.getElementById('adminPanel').style.display='block';
+    loadPanel();
+  }
+});
+</script>
+
+<!-- CONFIRM MODAL -->
+<div id="confOv" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(5px);z-index:3000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:22px;padding:36px 32px;max-width:400px;width:100%;box-shadow:0 28px 80px rgba(0,0,0,.25);text-align:center;animation:mIn .28s cubic-bezier(.34,1.4,.64,1);">
+    <div style="font-size:3rem;margin-bottom:14px;">⚠️</div>
+    <h3 style="font-family:Sora,sans-serif;font-size:1.15rem;font-weight:800;color:#1e1b4b;margin-bottom:8px;">Remove Student?</h3>
+    <p style="font-size:.88rem;color:#6b7280;margin-bottom:6px;">You are about to permanently remove:</p>
+    <p style="font-family:monospace;font-size:1rem;font-weight:800;color:#4f46e5;background:#ede9fe;padding:6px 18px;border-radius:8px;display:inline-block;margin-bottom:18px;" id="conf-uname"></p>
+    <p style="font-size:.82rem;color:#ef4444;margin-bottom:24px;">This will delete their account and all test data permanently.</p>
+    <div style="display:flex;gap:12px;">
+      <button onclick="closeConfirm()" style="flex:1;padding:12px;background:#f3f4f6;color:#374151;border:none;border-radius:12px;font-size:.9rem;font-weight:700;font-family:inherit;cursor:pointer;transition:.2s;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">Cancel</button>
+      <button id="conf-yes" style="flex:1;padding:12px;background:#ef4444;color:#fff;border:none;border-radius:12px;font-size:.9rem;font-weight:700;font-family:inherit;cursor:pointer;transition:.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">Yes, Remove</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

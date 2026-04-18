@@ -1,0 +1,3942 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CareerPath AI</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #4f46e5;
+        --primary-dark: #3730a3;
+        --accent: #06b6d4;
+        --bg: #f0f4ff;
+        --text: #1e1b4b;
+        --muted: #6b7280;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warn: #f59e0b;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg);
+        min-height: 100vh;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 30px 20px;
+        background-image:
+          radial-gradient(circle at 20% 20%, #c7d2fe 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, #a5f3fc 0%, transparent 50%);
+      }
+      .page {
+        display: none;
+        width: 100%;
+        max-width: 900px;
+        animation: fadeIn 0.4s ease;
+      }
+      .page.active {
+        display: block;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ── AUTH ── */
+      .auth-box {
+        background: white;
+        border-radius: 24px;
+        padding: 48px 40px;
+        max-width: 420px;
+        margin: 0 auto;
+        box-shadow: 0 20px 60px rgba(79, 70, 229, 0.15);
+      }
+      .auth-box h2 {
+        font-family: "Sora", sans-serif;
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+      .auth-box p.sub {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-bottom: 28px;
+      }
+      .field {
+        margin-bottom: 16px;
+        text-align: left;
+      }
+      .field label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 6px;
+      }
+      .field input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        transition: border 0.2s;
+        outline: none;
+      }
+      .field input:focus {
+        border-color: var(--primary);
+      }
+
+      /* ── BUTTONS ── */
+      .btn {
+        display: inline-block;
+        width: 100%;
+        padding: 13px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+        margin-top: 8px;
+      }
+      .btn:hover {
+        background: var(--primary-dark);
+      }
+      .btn:active {
+        transform: scale(0.98);
+      }
+      .btn-outline {
+        background: transparent;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+      }
+      .btn-outline:hover {
+        background: #ede9fe;
+      }
+      .btn-sm {
+        width: auto;
+        padding: 9px 22px;
+        font-size: 0.88rem;
+      }
+      .btn-success {
+        background: #059669;
+      }
+      .btn-success:hover {
+        background: #047857;
+      }
+      .btn-gray {
+        background: #6b7280;
+      }
+      .btn-gray:hover {
+        background: #4b5563;
+      }
+
+      .switch-link {
+        margin-top: 18px;
+        font-size: 0.88rem;
+        color: var(--muted);
+      }
+      .switch-link span {
+        color: var(--primary);
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .switch-link span:hover {
+        text-decoration: underline;
+      }
+      .msg {
+        margin-top: 12px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        min-height: 20px;
+      }
+      .msg.error {
+        color: var(--danger);
+      }
+      .msg.ok {
+        color: var(--success);
+      }
+
+      /* ── PAGE HEADER ── */
+      .page-header {
+        text-align: center;
+        margin-bottom: 36px;
+      }
+      .page-header h1 {
+        font-family: "Sora", sans-serif;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--text);
+      }
+      .page-header p {
+        color: var(--muted);
+        margin-top: 6px;
+      }
+
+      /* ── CARDS ── */
+      .cards-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+      }
+      .card {
+        background: white;
+        border-radius: 20px;
+        padding: 32px 24px;
+        width: 200px;
+        box-shadow: 0 8px 30px rgba(79, 70, 229, 0.1);
+        text-align: center;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        border: 2px solid transparent;
+      }
+      .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 40px rgba(79, 70, 229, 0.18);
+        border-color: var(--primary);
+      }
+      .card-icon {
+        font-size: 3rem;
+        margin-bottom: 14px;
+        display: block;
+      }
+      .card h3 {
+        font-family: "Sora", sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 16px;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-size: 0.9rem;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        margin-bottom: 28px;
+        padding: 0;
+      }
+      .back-btn:hover {
+        text-decoration: underline;
+      }
+
+      /* ── QUIZ ── */
+      .quiz-wrap {
+        background: white;
+        border-radius: 24px;
+        padding: 40px;
+        max-width: 680px;
+        margin: 0 auto;
+        box-shadow: 0 20px 60px rgba(79, 70, 229, 0.12);
+      }
+      .quiz-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+      }
+      .quiz-meta h2 {
+        font-family: "Sora", sans-serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .progress-text {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      .progress-bar-wrap {
+        background: #e5e7eb;
+        border-radius: 99px;
+        height: 8px;
+        margin-bottom: 32px;
+        overflow: hidden;
+      }
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        border-radius: 99px;
+        transition: width 0.4s ease;
+      }
+      .question-card {
+        margin-bottom: 28px;
+      }
+      .question-card p {
+        font-size: 1.05rem;
+        font-weight: 500;
+        color: var(--text);
+        margin-bottom: 16px;
+        line-height: 1.6;
+      }
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .option {
+        padding: 12px 18px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 0.93rem;
+        font-family: inherit;
+        background: white;
+        text-align: left;
+        transition: all 0.15s;
+        color: var(--text);
+      }
+      .option:hover {
+        border-color: var(--primary);
+        background: #ede9fe;
+      }
+      .option.selected {
+        border-color: var(--primary);
+        background: #ede9fe;
+        font-weight: 600;
+      }
+      .nav-btns {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 24px;
+      }
+
+      /* ── RESULT ── */
+      .result-wrap {
+        background: white;
+        border-radius: 24px;
+        padding: 48px 36px;
+        max-width: 660px;
+        margin: 0 auto;
+        box-shadow: 0 20px 60px rgba(79, 70, 229, 0.12);
+        text-align: center;
+      }
+      .result-wrap .emoji {
+        font-size: 4rem;
+        margin-bottom: 16px;
+        display: block;
+      }
+      .result-wrap h2 {
+        font-family: "Sora", sans-serif;
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 12px;
+      }
+      .result-wrap p {
+        color: var(--muted);
+        line-height: 1.7;
+        margin-bottom: 24px;
+      }
+      .trait-bars {
+        text-align: left;
+        margin: 24px 0;
+      }
+      .trait {
+        margin-bottom: 14px;
+      }
+      .trait-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 5px;
+      }
+      .trait-bar-wrap {
+        background: #e5e7eb;
+        border-radius: 99px;
+        height: 10px;
+      }
+      .trait-bar {
+        height: 100%;
+        border-radius: 99px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+      }
+
+      /* ── TOPBAR ── */
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        border-radius: 16px;
+        padding: 12px 24px;
+        margin-bottom: 28px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      }
+      .topbar .logo {
+        font-family: "Sora", sans-serif;
+        font-weight: 800;
+        color: var(--primary);
+        font-size: 1.1rem;
+      }
+      .topbar .user-info {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      .topbar .logout-btn {
+        background: none;
+        border: none;
+        color: var(--danger);
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .topbar .logout-btn:hover {
+        text-decoration: underline;
+      }
+
+      /* ── ACADEMIC MARKS FORM ── */
+      .marks-wrap {
+        background: white;
+        border-radius: 24px;
+        padding: 40px;
+        max-width: 600px;
+        margin: 0 auto;
+        box-shadow: 0 20px 60px rgba(79, 70, 229, 0.12);
+      }
+      .marks-wrap h2 {
+        font-family: "Sora", sans-serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 24px;
+      }
+
+      .marks-field {
+        margin-bottom: 18px;
+        text-align: left;
+      }
+      .marks-field label {
+        display: block;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 7px;
+      }
+      .marks-field input[type="number"] {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-family: inherit;
+        outline: none;
+        transition: border 0.2s;
+      }
+      .marks-field input[type="number"]:focus {
+        border-color: var(--primary);
+      }
+
+      .stream-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        justify-content: center;
+        margin-top: 8px;
+      }
+      .stream-card {
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 22px 18px;
+        width: 160px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .stream-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px rgba(79, 70, 229, 0.15);
+      }
+      .stream-card .s-icon {
+        font-size: 2.2rem;
+        margin-bottom: 8px;
+        display: block;
+      }
+      .stream-card h4 {
+        font-family: "Sora", sans-serif;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .marks-result-card {
+        background: #f0fdf4;
+        border: 2px solid #bbf7d0;
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        text-align: left;
+      }
+      .marks-result-card h4 {
+        font-family: "Sora", sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #065f46;
+        margin-bottom: 10px;
+      }
+      .marks-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: #374151;
+        padding: 5px 0;
+        border-bottom: 1px solid #d1fae5;
+      }
+      .marks-row:last-child {
+        border-bottom: none;
+        font-weight: 700;
+        color: #065f46;
+      }
+      .career-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+      }
+      .career-tag {
+        background: #ede9fe;
+        color: var(--primary);
+        padding: 6px 14px;
+        border-radius: 99px;
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      /* ── COMPLETION TRACKER ── */
+      .completion-tracker {
+        background: white;
+        border-radius: 20px;
+        padding: 20px 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 30px rgba(79, 70, 229, 0.1);
+      }
+      .completion-tracker h3 {
+        font-family: "Sora", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 14px;
+      }
+      .tracker-items {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .tracker-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: #f3f4f6;
+        padding: 8px 14px;
+        border-radius: 99px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #6b7280;
+        transition: all 0.3s;
+      }
+      .tracker-item.done {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .tracker-item .check {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid #d1d5db;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.6rem;
+        transition: all 0.3s;
+      }
+      .tracker-item.done .check {
+        background: #10b981;
+        border-color: #10b981;
+        color: white;
+      }
+      .ai-btn-wrap {
+        margin-top: 18px;
+      }
+      .btn-ai {
+        background: linear-gradient(135deg, #4f46e5, #06b6d4);
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 14px;
+        font-size: 1rem;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        width: 100%;
+        transition:
+          opacity 0.2s,
+          transform 0.1s;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-ai:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .btn-ai:not(:disabled):hover {
+        opacity: 0.9;
+      }
+      .btn-ai:not(:disabled):active {
+        transform: scale(0.98);
+      }
+      .btn-ai .shine {
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 60%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        animation: shine 2s infinite;
+      }
+      @keyframes shine {
+        to {
+          left: 150%;
+        }
+      }
+
+      /* ── AI RECOMMENDATION PAGE ── */
+      .ai-result-wrap {
+        background: white;
+        border-radius: 24px;
+        padding: 48px 36px;
+        max-width: 760px;
+        margin: 0 auto;
+        box-shadow: 0 20px 60px rgba(79, 70, 229, 0.15);
+      }
+      .ai-result-wrap .hero {
+        text-align: center;
+        margin-bottom: 36px;
+      }
+      .ai-result-wrap .hero .big-emoji {
+        font-size: 4rem;
+        display: block;
+        margin-bottom: 12px;
+      }
+      .ai-result-wrap .hero h1 {
+        font-family: "Sora", sans-serif;
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: var(--text);
+      }
+      .ai-result-wrap .hero p {
+        color: var(--muted);
+        margin-top: 6px;
+      }
+      .ai-loading {
+        text-align: center;
+        padding: 40px 20px;
+      }
+      .ai-loading .spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid #e5e7eb;
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 16px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .ai-loading p {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+      .ai-output {
+        display: none;
+      }
+      .summary-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+      @media (max-width: 560px) {
+        .summary-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .summary-card {
+        border-radius: 16px;
+        padding: 18px 20px;
+        border: 2px solid transparent;
+      }
+      .summary-card.riasec {
+        background: #fef3c7;
+        border-color: #fde68a;
+      }
+      .summary-card.bigfive {
+        background: #ede9fe;
+        border-color: #c4b5fd;
+      }
+      .summary-card.test {
+        background: #d1fae5;
+        border-color: #6ee7b7;
+      }
+      .summary-card.academic {
+        background: #dbeafe;
+        border-color: #93c5fd;
+      }
+      .summary-card h4 {
+        font-family: "Sora", sans-serif;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 8px;
+        opacity: 0.7;
+      }
+      .summary-card p {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .summary-card .sub {
+        font-size: 0.8rem;
+        font-weight: 400;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+      .ai-text-box {
+        background: linear-gradient(135deg, #f0f4ff, #f0fdfa);
+        border: 2px solid #c7d2fe;
+        border-radius: 20px;
+        padding: 28px;
+        margin-bottom: 24px;
+      }
+      .ai-text-box h3 {
+        font-family: "Sora", sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .ai-text-box .ai-content {
+        font-size: 0.95rem;
+        line-height: 1.8;
+        color: #374151;
+        white-space: pre-wrap;
+      }
+      .course-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 8px;
+      }
+      .course-chip {
+        padding: 9px 18px;
+        border-radius: 99px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .course-chip.gold {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        color: #92400e;
+        border: 2px solid #f59e0b;
+      }
+      .course-chip.silver {
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        color: #1e40af;
+        border: 2px solid #3b82f6;
+      }
+      .course-chip.bronze {
+        background: linear-gradient(135deg, #fdf4ee, #fde8d8);
+        color: #9a3412;
+        border: 2px solid #fb923c;
+      }
+      .course-chip.plain {
+        background: #f3f4f6;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+      }
+      .error-box {
+        background: #fef2f2;
+        border: 2px solid #fecaca;
+        border-radius: 16px;
+        padding: 20px;
+        color: #dc2626;
+        font-size: 0.9rem;
+        text-align: center;
+      }
+
+
+      /* ══════════════════════════════════
+       COURSE SUGGESTION PAGES
+    ══════════════════════════════════ */
+      .cs-wrap {
+        max-width: 740px;
+        margin: 0 auto;
+      }
+      .cs-header {
+        text-align: center;
+        margin-bottom: 28px;
+      }
+      .cs-header .cs-badge {
+        display: inline-block;
+        background: var(--primary);
+        color: white;
+        padding: 6px 18px;
+        border-radius: 99px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+      .cs-header h1 {
+        font-family: "Sora", sans-serif;
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: var(--text);
+      }
+      .cs-header p {
+        color: var(--muted);
+        margin-top: 6px;
+      }
+
+      .cs-card {
+        background: white;
+        border-radius: 20px;
+        padding: 26px 30px;
+        box-shadow: 0 8px 32px rgba(79, 70, 229, 0.1);
+        margin-bottom: 20px;
+      }
+      .cs-card-title {
+        font-family: "Sora", sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .cs-banner {
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 0.87rem;
+        font-weight: 500;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .cs-banner.ok {
+        background: #d1fae5;
+        color: #065f46;
+        border: 1.5px solid #6ee7b7;
+      }
+      .cs-banner.warn {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1.5px solid #fde68a;
+      }
+
+      .cs-score-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      @media (max-width: 500px) {
+        .cs-score-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .cs-score-box {
+        border-radius: 12px;
+        padding: 12px 14px;
+      }
+      .cs-score-box.riasec {
+        background: #fef3c7;
+        border: 1.5px solid #fde68a;
+      }
+      .cs-score-box.bigfive {
+        background: #ede9fe;
+        border: 1.5px solid #c4b5fd;
+      }
+      .cs-score-box.apt {
+        background: #d1fae5;
+        border: 1.5px solid #6ee7b7;
+      }
+      .cs-score-box h5 {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.6;
+        margin-bottom: 4px;
+      }
+      .cs-score-box .cs-top {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .cs-score-box .cs-sub {
+        font-size: 0.74rem;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+
+      .cs-field {
+        margin-bottom: 14px;
+      }
+      .cs-field label {
+        display: block;
+        font-size: 0.83rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 5px;
+      }
+      .cs-field input {
+        width: 100%;
+        padding: 11px 14px;
+        border: 2px solid #e5e7eb;
+        border-radius: 11px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        outline: none;
+        transition: border 0.2s;
+      }
+      .cs-field input:focus {
+        border-color: var(--primary);
+      }
+
+      .cs-result {
+        display: none;
+      }
+      .cs-rc-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .cs-rc-icon {
+        font-size: 1.5rem;
+      }
+      .cs-rc-title {
+        font-family: "Sora", sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .cs-chip-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+      }
+      .cs-chip {
+        padding: 8px 16px;
+        border-radius: 99px;
+        font-size: 0.83rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .cs-chip.gold {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        color: #92400e;
+        border: 2px solid #f59e0b;
+      }
+      .cs-chip.silver {
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        color: #1e40af;
+        border: 2px solid #3b82f6;
+      }
+      .cs-chip.bronze {
+        background: linear-gradient(135deg, #fdf4ee, #fde8d8);
+        color: #9a3412;
+        border: 2px solid #fb923c;
+      }
+      .cs-chip.plain {
+        background: #f3f4f6;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+      }
+
+      .cs-marks-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .cs-marks-table td {
+        padding: 7px 0;
+        border-bottom: 1px solid #f3f4f6;
+        font-size: 0.88rem;
+      }
+      .cs-marks-table tr:last-child td {
+        border-bottom: none;
+        font-weight: 700;
+      }
+      .cs-marks-table td:last-child {
+        text-align: right;
+      }
+      .cs-score-pill {
+        background: #ede9fe;
+        color: var(--primary);
+        padding: 2px 10px;
+        border-radius: 99px;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+      .cs-grade-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white;
+        padding: 7px 18px;
+        border-radius: 99px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+
+      .cs-trait-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 7px;
+      }
+      .cs-trait-row .ct-label {
+        width: 120px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text);
+        flex-shrink: 0;
+      }
+      .cs-trait-row .ct-bar-wrap {
+        flex: 1;
+        background: #e5e7eb;
+        border-radius: 99px;
+        height: 7px;
+      }
+      .cs-trait-row .ct-bar {
+        height: 7px;
+        border-radius: 99px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+      }
+      .cs-trait-row .ct-pct {
+        width: 32px;
+        text-align: right;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      .cs-stream-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+        margin-bottom: 8px;
+      }
+      .cs-stream-card {
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 16px 14px;
+        width: 140px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .cs-stream-card:hover,
+      .cs-stream-card.active {
+        border-color: var(--primary);
+        background: #ede9fe;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(79, 70, 229, 0.14);
+      }
+      .cs-stream-card .ss-icon {
+        font-size: 1.8rem;
+        display: block;
+        margin-bottom: 6px;
+      }
+      .cs-stream-card h4 {
+        font-family: "Sora", sans-serif;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .cs-marks-section {
+        display: none;
+        margin-top: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ═══════════════ PAGE 1: SIGNUP ═══════════════ -->
+    <div id="page-signup" class="page active">
+      <div class="auth-box">
+        <h2>Create Account</h2>
+        <p class="sub">Join CareerPath AI to discover your future</p>
+        <div class="field">
+          <label>Username</label
+          ><input type="text" id="su-user" placeholder="Enter username" />
+        </div>
+        <div class="field">
+          <label>Password</label
+          ><input type="password" id="su-pass" placeholder="Enter password" />
+        </div>
+        <button class="btn" onclick="signup()">Create Account</button>
+        <div class="msg" id="su-msg"></div>
+        <div class="switch-link">
+          Already have an account?
+          <span onclick="goTo('page-login')">Login here</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE 2: LOGIN ═══════════════ -->
+    <div id="page-login" class="page">
+      <div class="auth-box">
+        <h2>Welcome Back</h2>
+        <p class="sub">Login to continue your career journey</p>
+        <div class="field">
+          <label>Username</label
+          ><input type="text" id="li-user" placeholder="Enter username" />
+        </div>
+        <div class="field">
+          <label>Password</label
+          ><input type="password" id="li-pass" placeholder="Enter password" />
+        </div>
+        <button class="btn" onclick="login()">Login</button>
+        <div class="msg" id="li-msg"></div>
+        <div class="switch-link">
+          New user? <span onclick="goTo('page-signup')">Create account</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE 3: CLASS SELECTION ═══════════════ -->
+    <div id="page-class" class="page">
+      <div class="topbar">
+        <span class="logo">🎯 CareerPath AI</span>
+        <span class="user-info">👤 <span id="display-username"></span></span>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+      <div class="page-header">
+        <h1>Select Your Class</h1>
+        <p>Choose your standard to get personalised career guidance</p>
+      </div>
+      <div class="cards-grid">
+        <div class="card" onclick="selectClass('10th')">
+          <span class="card-icon">📘</span>
+          <h3>10th Standard</h3>
+          <button class="btn btn-sm">Start →</button>
+        </div>
+        <div class="card" onclick="selectClass('12th')">
+          <span class="card-icon">🎓</span>
+          <h3>12th Standard</h3>
+          <button class="btn btn-sm">Start →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE 4: TEST SELECTION ═══════════════ -->
+    <div id="page-tests" class="page">
+      <div class="topbar">
+        <span class="logo">🎯 CareerPath AI</span>
+        <span class="user-info">👤 <span id="display-username2"></span></span>
+        <div style="display: flex; gap: 10px; align-items: center">
+          <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+      </div>
+      <button class="back-btn" onclick="goTo('page-class')">
+        ← Back to Classes
+      </button>
+      <div class="page-header">
+        <h1 id="test-page-title">Assessment Tests</h1>
+        <p>
+          Complete these tests to get your personalised career recommendation
+        </p>
+      </div>
+      <!-- Completion Tracker -->
+      <div class="completion-tracker">
+        <h3>📋 Your Progress</h3>
+        <div class="tracker-items">
+          <div class="tracker-item" id="track-riasec">
+            <div class="check">✓</div>
+            RIASEC Test
+          </div>
+          <div class="tracker-item" id="track-bigfive">
+            <div class="check">✓</div>
+            Big Five Test
+          </div>
+          <div class="tracker-item" id="track-aptitude">
+            <div class="check">✓</div>
+            Aptitude Test
+          </div>
+          <div class="tracker-item" id="track-academic" style="display: none">
+            <div class="check">✓</div>
+            Academic Analysis
+          </div>
+        </div>
+        <div class="ai-btn-wrap">
+          <button
+            class="btn-ai"
+            id="btn-get-recommendation"
+            disabled
+            onclick="goToAIResult()"
+          >
+            <span class="shine"></span>
+            🤖 Complete all 3 tests to unlock AI Recommendation
+          </button>
+        </div>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card" id="card-riasec" onclick="startTest('riasec')">
+          <span class="card-icon">🔍</span>
+          <h3>RIASEC Test</h3>
+          <button class="btn btn-sm">Start Test</button>
+        </div>
+        <div class="card" id="card-bigfive" onclick="startTest('bigfive')">
+          <span class="card-icon">🧠</span>
+          <h3>Big Five Test</h3>
+          <button class="btn btn-sm">Start Test</button>
+        </div>
+        <div class="card" id="card-aptitude" onclick="startTest('aptitude')">
+          <span class="card-icon">⚡</span>
+          <h3>Aptitude Test</h3>
+          <button class="btn btn-sm">Start Test</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE 5: QUIZ ═══════════════ -->
+    <div id="page-quiz" class="page">
+      <button class="back-btn" onclick="backToTests()">← Back to Tests</button>
+      <div class="quiz-wrap">
+        <div class="quiz-meta">
+          <h2 id="quiz-title">Test</h2>
+          <span class="progress-text" id="quiz-progress">1 / 30</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="quiz-bar" style="width: 3%"></div>
+        </div>
+        <div class="question-card">
+          <p id="quiz-question">Loading question...</p>
+          <div class="options" id="quiz-options"></div>
+        </div>
+        <div class="nav-btns">
+          <button
+            class="btn btn-outline btn-sm"
+            onclick="prevQ()"
+            id="btn-prev"
+          >
+            ← Previous
+          </button>
+          <button class="btn btn-sm" onclick="nextQ()" id="btn-next">
+            Next →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE 6: RESULT (Quiz) ═══════════════ -->
+    <div id="page-result" class="page">
+      <div class="result-wrap">
+        <span class="emoji" id="result-emoji">🎉</span>
+        <h2 id="result-title">Your Results</h2>
+        <p id="result-desc">Here is your personality profile</p>
+        <div class="trait-bars" id="result-traits"></div>
+        <button class="btn" onclick="backToTests()" style="margin-top: 8px">
+          ← Take Another Test
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE 7: ACADEMIC — CLASS SELECT ═══════════════ -->
+    <div id="page-ac-class" class="page">
+      <button class="back-btn" onclick="backToTests()">← Back to Tests</button>
+      <div class="marks-wrap">
+        <h2>📊 Academic Analysis</h2>
+        <p style="color: var(--muted); margin-bottom: 28px">
+          Enter your academic marks for personalised career guidance.
+        </p>
+
+        <div class="marks-field">
+          <label>Select Your Class</label>
+          <div style="display: flex; gap: 14px; margin-top: 4px">
+            <button
+              class="btn btn-outline"
+              style="flex: 1"
+              onclick="selectAcClass('10th')"
+            >
+              📘 10th Standard
+            </button>
+            <button
+              class="btn btn-outline"
+              style="flex: 1"
+              onclick="selectAcClass('12th')"
+            >
+              🎓 12th Standard
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE 8: ACADEMIC — 10TH MARKS ═══════════════ -->
+    <div id="page-ac-10th" class="page">
+      <button class="back-btn" onclick="goTo('page-ac-class')">← Back</button>
+      <div class="marks-wrap">
+        <h2>📘 10th Standard Marks</h2>
+        <p style="color: var(--muted); margin-bottom: 24px">
+          Enter marks out of 100 for each subject.
+        </p>
+
+        <div class="marks-field">
+          <label>Mathematics</label
+          ><input
+            type="number"
+            id="m10-math"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+        <div class="marks-field">
+          <label>Science</label
+          ><input
+            type="number"
+            id="m10-sci"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+        <div class="marks-field">
+          <label>Social Science</label
+          ><input
+            type="number"
+            id="m10-soc"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+        <div class="marks-field">
+          <label>Languages (Average)</label
+          ><input
+            type="number"
+            id="m10-lang"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+
+        <button class="btn btn-success" onclick="submit10th()">
+          Submit & View Analysis ✓
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE 9: ACADEMIC — 12TH STREAM SELECT ═══════════════ -->
+    <div id="page-ac-12stream" class="page">
+      <button class="back-btn" onclick="goTo('page-ac-class')">← Back</button>
+      <div class="marks-wrap">
+        <h2>🎓 Select Your 12th Stream</h2>
+        <p style="color: var(--muted); margin-bottom: 28px">
+          Choose your 12th standard group to enter marks.
+        </p>
+        <div class="stream-grid">
+          <div class="stream-card" onclick="selectStream('cs')">
+            <span class="s-icon">💻</span>
+            <h4>Computer Science</h4>
+          </div>
+          <div class="stream-card" onclick="selectStream('bio')">
+            <span class="s-icon">🧬</span>
+            <h4>Biology Group</h4>
+          </div>
+          <div class="stream-card" onclick="selectStream('arts')">
+            <span class="s-icon">📚</span>
+            <h4>Arts / Commerce</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE 10: 12TH CS MARKS ═══════════════ -->
+    <div id="page-ac-cs" class="page">
+      <button class="back-btn" onclick="goTo('page-ac-12stream')">
+        ← Back
+      </button>
+      <div class="marks-wrap">
+        <h2>💻 12th — Computer Science Group</h2>
+        <p style="color: var(--muted); margin-bottom: 24px">
+          Enter marks out of 100 for each subject.
+        </p>
+
+        <div class="marks-field">
+          <label>Physics</label
+          ><input
+            type="number"
+            id="m12cs-phy"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+        <div class="marks-field">
+          <label>Chemistry</label
+          ><input
+            type="number"
+            id="m12cs-che"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+        <div class="marks-field">
+          <label>Computer Science</label
+          ><input
+            type="number"
+            id="m12cs-cs"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+        <div class="marks-field">
+          <label>Mathematics</label
+          ><input
+            type="number"
+            id="m12cs-mat"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+
+        <button class="btn btn-success" onclick="submit12('cs')">
+          Submit & View Analysis ✓
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE 11: 12TH BIO MARKS ═══════════════ -->
+    <div id="page-ac-bio" class="page">
+      <button class="back-btn" onclick="goTo('page-ac-12stream')">
+        ← Back
+      </button>
+      <div class="marks-wrap">
+        <h2>🧬 12th — Biology Group</h2>
+        <p style="color: var(--muted); margin-bottom: 24px">
+          Enter marks out of 100 for each subject.
+        </p>
+
+        <div class="marks-field">
+          <label>Physics</label
+          ><input
+            type="number"
+            id="m12bio-phy"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+        <div class="marks-field">
+          <label>Chemistry</label
+          ><input
+            type="number"
+            id="m12bio-che"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+        <div class="marks-field">
+          <label>Biology</label
+          ><input
+            type="number"
+            id="m12bio-bio"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+        <div class="marks-field">
+          <label>Mathematics</label
+          ><input
+            type="number"
+            id="m12bio-mat"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+
+        <button class="btn btn-success" onclick="submit12('bio')">
+          Submit & View Analysis ✓
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE 12: 12TH ARTS MARKS ═══════════════ -->
+    <div id="page-ac-arts" class="page">
+      <button class="back-btn" onclick="goTo('page-ac-12stream')">
+        ← Back
+      </button>
+      <div class="marks-wrap">
+        <h2>📚 12th — Arts / Commerce Group</h2>
+        <p style="color: var(--muted); margin-bottom: 24px">
+          Enter marks out of 100 for each subject.
+        </p>
+
+        <div class="marks-field">
+          <label>Commerce / Accountancy</label
+          ><input
+            type="number"
+            id="m12arts-com"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+        <div class="marks-field">
+          <label>Economics</label
+          ><input
+            type="number"
+            id="m12arts-eco"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+        <div class="marks-field">
+          <label>History / Geography</label
+          ><input
+            type="number"
+            id="m12arts-his"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+        <div class="marks-field">
+          <label>Computer application</label
+          ><input
+            type="number"
+            id="m12arts-ca"
+            min="0"
+            max="100"
+            placeholder="Enter marks (0–100)"
+          />
+        </div>
+
+        <button class="btn btn-success" onclick="submit12('arts')">
+          Submit & View Analysis ✓
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE 13: ACADEMIC RESULT ═══════════════ -->
+    <div id="page-ac-result" class="page">
+      <button class="back-btn" onclick="backToTests()">← Back to Tests</button>
+      <div class="result-wrap">
+        <span class="emoji">📊</span>
+        <h2>Academic Analysis Result</h2>
+        <p id="ac-result-subtitle">
+          Based on your marks, here is your career analysis.
+        </p>
+
+        <div id="ac-marks-summary"></div>
+
+        <div style="text-align: left; margin-top: 20px">
+          <h3
+            style="
+              font-family: Sora;
+              font-size: 1rem;
+              color: var(--text);
+              margin-bottom: 12px;
+            "
+          >
+            🎯 Recommended Career Paths
+          </h3>
+          <div class="career-tags" id="ac-career-tags"></div>
+        </div>
+
+        <div style="text-align: left; margin-top: 20px">
+          <h3
+            style="
+              font-family: Sora;
+              font-size: 1rem;
+              color: var(--text);
+              margin-bottom: 10px;
+            "
+          >
+            📈 Subject Performance
+          </h3>
+          <div class="trait-bars" id="ac-trait-bars"></div>
+        </div>
+
+        <button class="btn" onclick="backToTests()" style="margin-top: 16px">
+          ← Take Another Test
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE 14: AI RECOMMENDATION ═══════════════ -->
+    <div id="page-ai-result" class="page">
+      <button class="back-btn" onclick="backToTests()">← Back to Tests</button>
+      <div class="ai-result-wrap">
+        <div class="hero">
+          <span class="big-emoji">🤖</span>
+          <h1>Your AI Career Recommendation</h1>
+          <p>Based on RIASEC + Big Five + Aptitude + Academic Analysis</p>
+        </div>
+
+        <!-- Score Summary Grid -->
+        <div class="summary-grid" id="ai-summary-grid"></div>
+
+        <!-- Course Suggestion Button -->
+        <div style="text-align: center; margin-top: 8px">
+          <p
+            style="color: var(--muted); font-size: 0.9rem; margin-bottom: 16px"
+          >
+            Your 4 tests are complete! Get detailed course suggestions based on
+            your profile:
+          </p>
+          <button
+            class="btn btn-success"
+            onclick="openCoursePageAuto()"
+            style="
+              max-width: 340px;
+              margin: 0 auto;
+              padding: 16px;
+              font-size: 1.05rem;
+            "
+          >
+            🎓 Get Course Suggestions →
+          </button>
+        </div>
+
+        <button
+          class="btn btn-outline"
+          onclick="backToTests()"
+          style="
+            margin-top: 16px;
+            max-width: 340px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+          "
+        >
+          ← Take Tests Again
+        </button>
+      </div>
+    </div>
+
+    <script>
+      let currentClass = "";
+      let currentTest = "";
+
+      /* ══════════════════════════════════════════════
+   STORAGE  —  localStorage (works on all devices)
+══════════════════════════════════════════════ */
+      let savedScores = {
+        riasec: null,
+        bigfive: null,
+        aptitude: null,
+        academic: null,
+      };
+
+      function getStorageKey(username) {
+        return "cp_scores_" + username;
+      }
+
+      function loadScoresForUser(username) {
+        try {
+          const raw = localStorage.getItem(getStorageKey(username));
+          savedScores = raw
+            ? JSON.parse(raw)
+            : { riasec: null, bigfive: null, aptitude: null, academic: null };
+        } catch (e) {
+          savedScores = {
+            riasec: null,
+            bigfive: null,
+            aptitude: null,
+            academic: null,
+          };
+        }
+        updateTracker();
+      }
+
+      function saveScoreForUser(testType, scoresData) {
+        const username = localStorage.getItem("cp_loggedIn_user");
+        if (!username) return;
+        savedScores[testType] = scoresData;
+        localStorage.setItem(
+          getStorageKey(username),
+          JSON.stringify(savedScores),
+        );
+      }
+
+      function resetTrackerUI() {
+        ["riasec", "bigfive", "aptitude", "academic"].forEach((key) => {
+          const el = document.getElementById("track-" + key);
+          const card = document.getElementById("card-" + key);
+          if (el) el.classList.remove("done");
+          if (card) {
+            card.style.borderColor = "transparent";
+            const btn = card.querySelector("button");
+            const labels = {
+              riasec: "Start Test",
+              bigfive: "Start Test",
+              aptitude: "Start Test",
+              academic: "Start",
+            };
+            btn.textContent = labels[key];
+            btn.style.background = "";
+          }
+        });
+      }
+
+      function updateTracker() {
+        resetTrackerUI();
+        ["riasec", "bigfive", "aptitude", "academic"].forEach((key) => {
+          const el = document.getElementById("track-" + key);
+          const card = document.getElementById("card-" + key);
+          if (savedScores[key]) {
+            el && el.classList.add("done");
+            if (card) {
+              card.style.borderColor = "#10b981";
+              card.querySelector("button").textContent = "✓ Done";
+              card.querySelector("button").style.background = "#059669";
+            }
+          }
+        });
+        const threeKeys = ["riasec", "bigfive", "aptitude"];
+        const allDone = threeKeys.every((k) => savedScores[k] !== null);
+        const btn = document.getElementById("btn-get-recommendation");
+        if (btn) {
+          btn.disabled = !allDone;
+          const remaining = threeKeys.filter((k) => !savedScores[k]).length;
+          btn.childNodes[btn.childNodes.length - 1].textContent = allDone
+            ? " 🚀 Get My AI Career Recommendation!"
+            : ` 🤖 Complete ${remaining} more test(s) to unlock`;
+        }
+      }
+
+      function goToAIResult() {
+        goTo("page-ai-result");
+        buildSummaryGrid();
+      }
+
+
+      /* ── NAVIGATION ── */
+      function goTo(pageId) {
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document.getElementById(pageId).classList.add("active");
+        window.scrollTo(0, 0);
+      }
+
+      /* ══════════════════════════════════════════════
+   AUTH  —  localStorage based (works everywhere)
+══════════════════════════════════════════════ */
+      function signup() {
+        const user = document.getElementById("su-user").value.trim();
+        const pass = document.getElementById("su-pass").value.trim();
+        const msg = document.getElementById("su-msg");
+        if (!user || !pass) {
+          msg.className = "msg error";
+          msg.textContent = "Please fill all fields!";
+          return;
+        }
+        if (user.length < 3) {
+          msg.className = "msg error";
+          msg.textContent = "Username must be at least 3 characters!";
+          return;
+        }
+
+        // Check if username already taken
+        const existing = localStorage.getItem("cp_user_" + user);
+        if (existing) {
+          msg.className = "msg error";
+          msg.textContent = "Username already taken! Try another.";
+          return;
+        }
+
+        // Save user
+        localStorage.setItem("cp_user_" + user, pass);
+        msg.className = "msg ok";
+        msg.textContent = "Account created! Please login.";
+        setTimeout(() => goTo("page-login"), 1200);
+      }
+
+      function login() {
+        const user = document.getElementById("li-user").value.trim();
+        const pass = document.getElementById("li-pass").value.trim();
+        const msg = document.getElementById("li-msg");
+        if (!user || !pass) {
+          msg.className = "msg error";
+          msg.textContent = "Please fill all fields!";
+          return;
+        }
+
+        const savedPass = localStorage.getItem("cp_user_" + user);
+        if (!savedPass || savedPass !== pass) {
+          msg.className = "msg error";
+          msg.textContent = "Invalid username or password!";
+          return;
+        }
+
+        localStorage.setItem("cp_loggedIn", "true");
+        localStorage.setItem("cp_loggedIn_user", user);
+        document.getElementById("display-username").textContent = user;
+        document.getElementById("display-username2").textContent = user;
+        msg.textContent = "";
+        loadScoresForUser(user);
+
+        // Direct test navigation from dashboard
+        const directTest = localStorage.getItem("cp_direct_test");
+        if (directTest) {
+          localStorage.removeItem("cp_direct_test");
+          if (directTest === "riasec") {
+            currentClass = currentClass || "12th";
+            selectClass(currentClass);
+            setTimeout(() => startTest("riasec"), 100);
+            return;
+          }
+          if (directTest === "bigfive") {
+            currentClass = currentClass || "12th";
+            selectClass(currentClass);
+            setTimeout(() => startTest("bigfive"), 100);
+            return;
+          }
+          if (directTest === "aptitude") {
+            currentClass = currentClass || "12th";
+            selectClass(currentClass);
+            setTimeout(() => startTest("aptitude"), 100);
+            return;
+          }
+          if (directTest === "academic") {
+            currentClass = currentClass || "12th";
+            selectClass(currentClass);
+            setTimeout(() => openAcademic(), 100);
+            return;
+          }
+          if (directTest === "ai") {
+            currentClass = currentClass || "12th";
+            selectClass(currentClass);
+            setTimeout(() => goToAIResult(), 100);
+            return;
+          }
+          if (directTest === "course") {
+            currentClass = currentClass || "12th";
+            selectClass(currentClass);
+            setTimeout(() => openCoursePageAuto(), 100);
+            return;
+          }
+        }
+
+        goTo("page-class");
+      }
+
+      function logout() {
+        localStorage.removeItem("cp_loggedIn");
+        localStorage.removeItem("cp_loggedIn_user");
+        savedScores = {
+          riasec: null,
+          bigfive: null,
+          aptitude: null,
+          academic: null,
+        };
+        document.getElementById("li-user").value = "";
+        document.getElementById("li-pass").value = "";
+        goTo("page-login");
+      }
+
+      function selectClass(cls) {
+        currentClass = cls;
+        document.getElementById("test-page-title").textContent =
+          cls + " Standard — Assessment Tests";
+        goTo("page-tests");
+      }
+
+      function backToTests() {
+        goTo("page-tests");
+      }
+
+      /* ── ACADEMIC FLOW ── */
+      function openAcademic() {
+        goTo("page-ac-class");
+      }
+      function selectAcClass(cls) {
+        if (cls === "10th") goTo("page-ac-10th");
+        else goTo("page-ac-12stream");
+      }
+      function selectStream(s) {
+        if (s === "cs") goTo("page-ac-cs");
+        if (s === "bio") goTo("page-ac-bio");
+        if (s === "arts") goTo("page-ac-arts");
+      }
+
+      /* ── 10TH SUBMIT ── */
+      function submit10th() {
+        const math = parseInt(document.getElementById("m10-math").value);
+        const sci = parseInt(document.getElementById("m10-sci").value);
+        const soc = parseInt(document.getElementById("m10-soc").value);
+        const lang = parseInt(document.getElementById("m10-lang").value);
+
+        if ([math, sci, soc, lang].some((v) => isNaN(v) || v < 0 || v > 100)) {
+          alert("❌ Please enter valid marks (0–100) for all subjects!");
+          return;
+        }
+        saveData('10th');
+        const avg = Math.round((math + sci + soc + lang) / 4);
+        const subjects = [
+          { name: "Mathematics", score: math },
+          { name: "Science", score: sci },
+          { name: "Social Science", score: soc },
+          { name: "Languages", score: lang },
+        ];
+
+        // Career recommendation based on top subject
+        const top = subjects.sort((a, b) => b.score - a.score)[0];
+        let careers = [];
+        if (top.name === "Mathematics")
+          careers = [
+            "Engineering",
+            "Data Science",
+            "Finance",
+            "Architecture",
+            "Statistics",
+          ];
+        else if (top.name === "Science")
+          careers = [
+            "Medicine",
+            "Research",
+            "Biotechnology",
+            "Environmental Science",
+            "Pharmacy",
+          ];
+        else if (top.name === "Social Science")
+          careers = [
+            "Law",
+            "Civil Services",
+            "Journalism",
+            "Social Work",
+            "History",
+          ];
+        else
+          careers = [
+            "Literature",
+            "Teaching",
+            "Linguistics",
+            "Mass Communication",
+            "Writing",
+          ];
+
+        if (avg >= 85) careers.unshift("Any Top College");
+        else if (avg >= 70) careers.push("Government Jobs");
+
+        showAcResult("10th", subjects, avg, careers, top.name);
+      }
+
+      /* ── 12TH SUBMIT ── */
+      function submit12(stream) {
+        let subjects = [];
+        let valid = true;
+
+        if (stream === "cs") {
+          const vals = ["m12cs-phy", "m12cs-che", "m12cs-cs", "m12cs-mat"].map(
+            (id) => parseInt(document.getElementById(id).value),
+          );
+          if (vals.some((v) => isNaN(v) || v < 0 || v > 100)) {
+            valid = false;
+          }
+          subjects = [
+            { name: "Physics", score: vals[0] },
+            { name: "Chemistry", score: vals[1] },
+            { name: "Computer Sci.", score: vals[2] },
+            { name: "Mathematics", score: vals[3] },
+          ];
+        } else if (stream === "bio") {
+          const vals = [
+            "m12bio-phy",
+            "m12bio-che",
+            "m12bio-bio",
+            "m12bio-mat",
+          ].map((id) => parseInt(document.getElementById(id).value));
+          if (vals.some((v) => isNaN(v) || v < 0 || v > 100)) {
+            valid = false;
+          }
+          subjects = [
+            { name: "Physics", score: vals[0] },
+            { name: "Chemistry", score: vals[1] },
+            { name: "Biology", score: vals[2] },
+            { name: "Mathematics", score: vals[3] },
+          ];
+        } else if (stream === "arts") {
+          const vals = [
+            "m12arts-com",
+            "m12arts-eco",
+            "m12arts-his",
+            "m12arts-ca",
+          ].map((id) => parseInt(document.getElementById(id).value));
+          if (vals.some((v) => isNaN(v) || v < 0 || v > 100)) {
+            valid = false;
+          }
+          subjects = [
+            { name: "Commerce/Acct.", score: vals[0] },
+            { name: "Economics", score: vals[1] },
+            { name: "History/Geo.", score: vals[2] },
+            { name: "Computer application", score: vals[3] },
+          ];
+        }
+
+        if (!valid) {
+          alert("❌ Please enter valid marks (0–100) for all subjects!");
+          return;
+        }
+
+        const avg = Math.round(
+          subjects.reduce((s, v) => s + v.score, 0) / subjects.length,
+        );
+        const top = [...subjects].sort((a, b) => b.score - a.score)[0];
+
+        let careers = [];
+        if (stream === "cs") {
+          if (top.name === "Computer Sci.")
+            careers = [
+              "Software Engineer",
+              "AI/ML Engineer",
+              "Cybersecurity",
+              "Game Developer",
+              "Web Developer",
+            ];
+          else if (top.name === "Mathematics")
+            careers = [
+              "Data Scientist",
+              "Statistician",
+              "Engineering",
+              "Finance",
+              "Actuarial Science",
+            ];
+          else
+            careers = [
+              "Engineering",
+              "Research",
+              "Defence Services",
+              "IT Industry",
+              "Data Analytics",
+            ];
+        } else if (stream === "bio") {
+          if (top.name === "Biology")
+            careers = [
+              "Doctor (MBBS)",
+              "Dentist",
+              "Pharmacy",
+              "Biotechnology",
+              "Nursing",
+            ];
+          else
+            careers = [
+              "Biomedical Engineer",
+              "Research Scientist",
+              "Environmental Science",
+              "Agriculture",
+              "Veterinary",
+            ];
+        } else if (stream === "arts") {
+          if (top.name === "Commerce/Acct.")
+            careers = [
+              "CA (Chartered Accountant)",
+              "CMA",
+              "Banking",
+              "Finance",
+              "Auditing",
+            ];
+          else if (top.name === "Economics")
+            careers = [
+              "Economist",
+              "Banking",
+              "MBA",
+              "Civil Services",
+              "Financial Analyst",
+            ];
+          else
+            careers = [
+              "Business Management",
+              "MBA",
+              "HR Management",
+              "Marketing",
+              "Entrepreneurship",
+            ];
+        }
+
+        const streamLabel =
+          stream === "cs"
+            ? "Computer Science"
+            : stream === "bio"
+              ? "Biology"
+              : "Arts/Commerce";
+        showAcResult("12th — " + streamLabel, subjects, avg, careers, top.name);
+      }
+      saveData('12th')
+      /* ── SHOW ACADEMIC RESULT ── */
+      function showAcResult(classLabel, subjects, avg, careers, topSubject) {
+        // ── SAVE ACADEMIC SCORES ──
+        saveScoreForUser("academic", {
+          classLabel,
+          subjects,
+          avg,
+          careers,
+          topSubject,
+        });
+        updateTracker();
+
+        let grade =
+          avg >= 90
+            ? "Outstanding 🌟"
+            : avg >= 75
+              ? "Excellent 🎉"
+              : avg >= 60
+                ? "Good 👍"
+                : avg >= 50
+                  ? "Average 📝"
+                  : "Needs Improvement 💪";
+
+        document.getElementById("ac-result-subtitle").textContent =
+          "Class: " + classLabel + " | Average: " + avg + "% — " + grade;
+
+        // Marks summary card
+        let summaryHTML =
+          '<div class="marks-result-card"><h4>📋 Subject-wise Marks</h4>';
+        subjects.forEach((s) => {
+          summaryHTML += `<div class="marks-row"><span>${s.name}</span><span>${s.score}/100</span></div>`;
+        });
+        summaryHTML += `<div class="marks-row"><span>Overall Average</span><span>${avg}/100</span></div></div>`;
+        document.getElementById("ac-marks-summary").innerHTML = summaryHTML;
+
+        // Career tags
+        document.getElementById("ac-career-tags").innerHTML = careers
+          .map((c) => `<span class="career-tag">${c}</span>`)
+          .join("");
+
+        // Trait bars
+        const barsContainer = document.getElementById("ac-trait-bars");
+        barsContainer.innerHTML = "";
+        subjects.forEach((s) => {
+          barsContainer.innerHTML += `
+      <div class="trait">
+        <div class="trait-label"><span>${s.name}</span><span>${s.score}%</span></div>
+        <div class="trait-bar-wrap"><div class="trait-bar" style="width:${s.score}%"></div></div>
+      </div>`;
+        });
+
+        goTo("page-ac-result");
+      }
+
+      /* ══════════════════════════════════
+   QUIZ DATA
+══════════════════════════════════ */
+      const tests = {
+        bigfive: {
+          title: "Big Five Personality Test 🧠",
+          options: [
+            "1 – Strongly Disagree",
+            "2 – Disagree",
+            "3 – Neutral",
+            "4 – Agree",
+            "5 – Strongly Agree",
+          ],
+          questions: [
+            { q: "Is creative and innovative", trait: "Openness" },
+            { q: "Prefers art over science", trait: "Openness" },
+            { q: "Has strong imagination", trait: "Openness" },
+            { q: "Is curious about many things", trait: "Openness" },
+            { q: "Is open to new experiences", trait: "Openness" },
+            { q: "Enjoys new ideas", trait: "Openness" },
+            { q: "Is organized and tidy", trait: "Conscientiousness" },
+            { q: "Is dependable and responsible", trait: "Conscientiousness" },
+            { q: "Is hardworking", trait: "Conscientiousness" },
+            { q: "Follows schedule strictly", trait: "Conscientiousness" },
+            { q: "Is self disciplined", trait: "Conscientiousness" },
+            { q: "Completes tasks on time", trait: "Conscientiousness" },
+            { q: "Is outgoing and sociable", trait: "Extraversion" },
+            { q: "Enjoys being center of attention", trait: "Extraversion" },
+            { q: "Talkative and energetic", trait: "Extraversion" },
+            { q: "Confident personality", trait: "Extraversion" },
+            { q: "Enjoys group activities", trait: "Extraversion" },
+            { q: "Feels energized around people", trait: "Extraversion" },
+            { q: "Is kind and compassionate", trait: "Agreeableness" },
+            { q: "Likes to help others", trait: "Agreeableness" },
+            { q: "Is cooperative", trait: "Agreeableness" },
+            { q: "Is patient and understanding", trait: "Agreeableness" },
+            { q: "Is polite and respectful", trait: "Agreeableness" },
+            { q: "Values harmony", trait: "Agreeableness" },
+            { q: "Worries a lot", trait: "Neuroticism" },
+            { q: "Gets stressed easily", trait: "Neuroticism" },
+            { q: "Feels anxious frequently", trait: "Neuroticism" },
+            { q: "Mood changes often", trait: "Neuroticism" },
+            { q: "Feels emotionally unstable", trait: "Neuroticism" },
+            { q: "Overthinks problems", trait: "Neuroticism" },
+          ],
+        },
+
+        riasec: {
+          title: "RIASEC Interest Test 🔍",
+          options: ["Not interested", "Sometimes", "Often", "Very much"],
+          questions: [
+            {
+              q: "I enjoy working on cars or fixing mechanical things.",
+              trait: "Realistic",
+            },
+            {
+              q: "I like building things with tools or equipment.",
+              trait: "Realistic",
+            },
+            {
+              q: "I enjoy outdoor activities and being physically active.",
+              trait: "Realistic",
+            },
+            {
+              q: "I like to do experiments with tools or machines.",
+              trait: "Realistic",
+            },
+            {
+              q: "I enjoy tasks where I work with my hands.",
+              trait: "Realistic",
+            },
+            {
+              q: "I enjoy solving puzzles and figuring out problems.",
+              trait: "Investigative",
+            },
+            {
+              q: "I like experimenting and discovering new things.",
+              trait: "Investigative",
+            },
+            {
+              q: "Learning science and math interests me.",
+              trait: "Investigative",
+            },
+            {
+              q: "I like analyzing data or information.",
+              trait: "Investigative",
+            },
+            {
+              q: "I enjoy working independently on complex problems.",
+              trait: "Investigative",
+            },
+            {
+              q: "I like creative writing or storytelling.",
+              trait: "Artistic",
+            },
+            {
+              q: "I enjoy drawing, painting, or sculpture.",
+              trait: "Artistic",
+            },
+            {
+              q: "I like playing musical instruments or singing.",
+              trait: "Artistic",
+            },
+            { q: "I enjoy imagining new ideas or designs.", trait: "Artistic" },
+            { q: "I like acting in plays or performing.", trait: "Artistic" },
+            {
+              q: "I like helping people solve their problems.",
+              trait: "Social",
+            },
+            { q: "Teaching or training others interests me.", trait: "Social" },
+            {
+              q: "I enjoy working with people in a cooperative environment.",
+              trait: "Social",
+            },
+            {
+              q: "I like activities where I can help others learn or grow.",
+              trait: "Social",
+            },
+            {
+              q: "I enjoy careers that involve counseling or supporting people.",
+              trait: "Social",
+            },
+            {
+              q: "I like persuading others or leading groups.",
+              trait: "Enterprising",
+            },
+            {
+              q: "I enjoy taking responsibility and making decisions.",
+              trait: "Enterprising",
+            },
+            {
+              q: "I am ambitious and set goals for myself.",
+              trait: "Enterprising",
+            },
+            {
+              q: "I like motivating others or selling ideas.",
+              trait: "Enterprising",
+            },
+            {
+              q: "I enjoy starting new projects or businesses.",
+              trait: "Enterprising",
+            },
+            {
+              q: "I like organizing files, desks, or schedules.",
+              trait: "Conventional",
+            },
+            {
+              q: "I enjoy tasks involving detail and precision.",
+              trait: "Conventional",
+            },
+            {
+              q: "I like working with numbers or spreadsheets.",
+              trait: "Conventional",
+            },
+            {
+              q: "I am good at keeping records of my work.",
+              trait: "Conventional",
+            },
+            {
+              q: "I prefer routines and structured tasks.",
+              trait: "Conventional",
+            },
+          ],
+        },
+
+        aptitude_10th: {
+          title: "Aptitude Test ⚡",
+          questions: [
+            {
+              q: "What comes next in the series? 2, 6, 12, 20, ___",
+              trait: "Numerical",
+              options: ["30", "28", "32", "24"],
+              answer: "30",
+            },
+            {
+              q: "Are all Mangoes Sweet?",
+              trait: "Logical",
+              options: ["Cannot be determined", "Yes", "No", "Maybe"],
+              answer: "Cannot be determined",
+            },
+            {
+              q: "What is 25% of 200?",
+              trait: "Numerical",
+              options: ["50", "25", "75", "100"],
+              answer: "50",
+            },
+            {
+              q: "3 : 5 = ___ : 40",
+              trait: "Numerical",
+              options: ["24", "15", "20", "30"],
+              answer: "24",
+            },
+            {
+              q: "Synonym of RAPID:",
+              trait: "Verbal",
+              options: ["Fast", "Slow", "Weak", "Dull"],
+              answer: "Fast",
+            },
+            {
+              q: "Opposite of EXPAND:",
+              trait: "Verbal",
+              options: ["Contract", "Increase", "Develop", "Grow"],
+              answer: "Contract",
+            },
+            {
+              q: "How many sides does a Hexagon have?",
+              trait: "Spatial",
+              options: ["6", "5", "7", "8"],
+              answer: "6",
+            },
+            {
+              q: "How many faces does a Cube have?",
+              trait: "Spatial",
+              options: ["6", "4", "8", "12"],
+              answer: "6",
+            },
+            {
+              q: "What is 10% of 500?",
+              trait: "Numerical",
+              options: ["50", "100", "60", "25"],
+              answer: "50",
+            },
+            {
+              q: "What comes next in the series? 10, 20, 40, 80, ___",
+              trait: "Numerical",
+              options: ["160", "120", "140", "100"],
+              answer: "160",
+            },
+          ],
+        },
+
+        aptitude: {
+          title: "Aptitude Test ⚡",
+          questions: [
+            {
+              q: "A train travels 360 km in 4 hours. What is its speed in m/s?",
+              trait: "Numerical",
+              options: ["20 m/s", "22.5 m/s", "25 m/s", "30 m/s"],
+              answer: "25 m/s",
+            },
+            {
+              q: "If 15% of a number is 45, what is 30% of that number?",
+              trait: "Numerical",
+              options: ["60", "80", "90", "100"],
+              answer: "90",
+            },
+            {
+              q: "Find the next number in the series: 2, 6, 12, 20, 30, ___",
+              trait: "Numerical",
+              options: ["40", "42", "44", "48"],
+              answer: "42",
+            },
+            {
+              q: "A shopkeeper sells an item for ₹520 at 30% profit. What is the cost price?",
+              trait: "Numerical",
+              options: ["₹380", "₹390", "₹400", "₹420"],
+              answer: "₹400",
+            },
+            {
+              q: "Two pipes fill a tank in 12 min and 18 min respectively. How long to fill together?",
+              trait: "Numerical",
+              options: ["7.2 min", "8 min", "7 min", "6.5 min"],
+              answer: "7.2 min",
+            },
+            {
+              q: "If MANGO = 50, what is the value of GRAPE using the same coding rule?",
+              trait: "Logical",
+              options: ["42", "47", "49", "52"],
+              answer: "47",
+            },
+            {
+              q: "A and B can do a job in 20 and 30 days. After working together for 5 days, A leaves. How many more days for B alone?",
+              trait: "Numerical",
+              options: ["17.5 days", "20 days", "18 days", "16 days"],
+              answer: "17.5 days",
+            },
+            {
+              q: "What is the angle between the hour hand and minute hand at 3:30?",
+              trait: "Spatial",
+              options: ["75°", "80°", "90°", "60°"],
+              answer: "75°",
+            },
+            {
+              q: "A sum doubles in 8 years at simple interest. What is the rate per annum?",
+              trait: "Numerical",
+              options: ["10%", "12%", "12.5%", "15%"],
+              answer: "12.5%",
+            },
+            {
+              q: "A class of 60 has boys:girls = 2:1. 20% boys and 25% girls play cricket. How many students play cricket?",
+              trait: "Numerical",
+              options: ["12", "13", "14", "15"],
+              answer: "13",
+            },
+            {
+              q: "What comes next in the series? 2, 6, 12, 20, ___",
+              trait: "Numerical",
+              options: ["30", "28", "32", "24"],
+              answer: "30",
+            },
+            {
+              q: "Are all Mangoes Sweet?",
+              trait: "Logical",
+              options: ["Cannot be determined", "Yes", "No", "Maybe"],
+              answer: "Cannot be determined",
+            },
+            {
+              q: "What is 25% of 200?",
+              trait: "Numerical",
+              options: ["50", "25", "75", "100"],
+              answer: "50",
+            },
+            {
+              q: "3 : 5 = ___ : 40",
+              trait: "Numerical",
+              options: ["24", "15", "20", "30"],
+              answer: "24",
+            },
+            {
+              q: "Synonym of RAPID:",
+              trait: "Verbal",
+              options: ["Fast", "Slow", "Weak", "Dull"],
+              answer: "Fast",
+            },
+            {
+              q: "Opposite of EXPAND:",
+              trait: "Verbal",
+              options: ["Contract", "Increase", "Develop", "Grow"],
+              answer: "Contract",
+            },
+            {
+              q: "How many sides does a Hexagon have?",
+              trait: "Spatial",
+              options: ["6", "5", "7", "8"],
+              answer: "6",
+            },
+            {
+              q: "How many faces does a Cube have?",
+              trait: "Spatial",
+              options: ["6", "4", "8", "12"],
+              answer: "6",
+            },
+            {
+              q: "What is 10% of 500?",
+              trait: "Numerical",
+              options: ["50", "100", "60", "25"],
+              answer: "50",
+            },
+            {
+              q: "What comes next in the series? 10, 20, 40, 80, ___",
+              trait: "Numerical",
+              options: ["160", "120", "140", "100"],
+              answer: "160",
+            },
+          ],
+        },
+      };
+
+      /* ── QUIZ STATE ── */
+      let qIndex = 0;
+      let answers = [];
+      let qData = [];
+      const defaultLikert = [
+        "1 – Strongly Disagree",
+        "2 – Disagree",
+        "3 – Neutral",
+        "4 – Agree",
+        "5 – Strongly Agree",
+      ];
+
+      function startTest(testKey) {
+        // Use easy aptitude for 10th students
+        if (testKey === "aptitude" && currentClass === "10th")
+          testKey = "aptitude_10th";
+        currentTest = testKey === "aptitude_10th" ? "aptitude" : testKey;
+        qIndex = 0;
+        answers = [];
+        qData = tests[testKey].questions;
+        document.getElementById("quiz-title").textContent =
+          tests[testKey].title;
+        renderQuestion();
+        goTo("page-quiz");
+      }
+
+      function renderQuestion() {
+        const total = qData.length;
+        const q = qData[qIndex];
+        document.getElementById("quiz-progress").textContent =
+          qIndex + 1 + " / " + total;
+        document.getElementById("quiz-bar").style.width =
+          ((qIndex + 1) / total) * 100 + "%";
+        document.getElementById("quiz-question").textContent = q.q;
+        const container = document.getElementById("quiz-options");
+        container.innerHTML = "";
+        const testOpts = tests[currentTest].options;
+        const opts = q.options
+          ? q.options
+          : testOpts
+            ? testOpts
+            : defaultLikert;
+        opts.forEach((opt, i) => {
+          const btn = document.createElement("button");
+          btn.className = "option" + (answers[qIndex] === i ? " selected" : "");
+          btn.textContent = opt;
+          btn.onclick = () => selectOption(i);
+          container.appendChild(btn);
+        });
+        document.getElementById("btn-prev").style.visibility =
+          qIndex === 0 ? "hidden" : "visible";
+        document.getElementById("btn-next").textContent =
+          qIndex === total - 1 ? "Submit ✓" : "Next →";
+      }
+
+      function selectOption(i) {
+        answers[qIndex] = i;
+        document
+          .querySelectorAll(".option")
+          .forEach((btn, idx) => btn.classList.toggle("selected", idx === i));
+      }
+
+      function nextQ() {
+        if (answers[qIndex] === undefined) {
+          alert("Please select an answer before continuing.");
+          return;
+        }
+        if (qIndex < qData.length - 1) {
+          qIndex++;
+          renderQuestion();
+        } else {
+          showResult();
+        }
+      }
+
+      function prevQ() {
+        if (qIndex > 0) {
+          qIndex--;
+          renderQuestion();
+        }
+      }
+
+      /* ── QUIZ RESULTS ── */
+      function showResult() {
+        const isAptitude = currentTest === "aptitude";
+
+        // ── APTITUDE: correct/wrong based scoring ──
+        if (isAptitude) {
+          const traitCorrect = {};
+          const traitTotal = {};
+          qData.forEach((q, i) => {
+            const selectedOption = q.options[answers[i] || 0];
+            const isCorrect = selectedOption === q.answer;
+            traitCorrect[q.trait] =
+              (traitCorrect[q.trait] || 0) + (isCorrect ? 1 : 0);
+            traitTotal[q.trait] = (traitTotal[q.trait] || 0) + 1;
+          });
+          const normalised = {};
+          Object.keys(traitTotal).forEach((t) => {
+            normalised[t] = Math.round((traitCorrect[t] / traitTotal[t]) * 100);
+          });
+          const totalCorrect = qData.filter(
+            (q, i) => q.options[answers[i] || 0] === q.answer,
+          ).length;
+          const topTrait = Object.entries(normalised).sort(
+            (a, b) => b[1] - a[1],
+          )[0][0];
+
+          saveScoreForUser(currentTest, { normalised, topTrait });
+          updateTracker();
+
+          const descriptions = {
+            Numerical:
+              "Strong numerical skills! Engineering, finance, and data science are great choices.",
+            Verbal:
+              "Strong verbal skills! Literature, law, journalism, and languages are ideal.",
+            Logical:
+              "Sharp logical thinking! Computer science, law, and strategy-based careers suit you.",
+            Spatial:
+              "Strong spatial reasoning! Architecture, design, and engineering are excellent options.",
+          };
+          document.getElementById("result-emoji").textContent = "⚡";
+          document.getElementById("result-title").textContent =
+            `Score: ${totalCorrect} / ${qData.length} — Top Skill: ${topTrait}`;
+          document.getElementById("result-desc").textContent =
+            descriptions[topTrait] ||
+            "Great work completing the aptitude test!";
+
+          const container = document.getElementById("result-traits");
+          container.innerHTML = `
+      <h3 style="font-family:Sora;font-size:.95rem;margin-bottom:14px;color:var(--text)">Skill Accuracy</h3>
+      <div style="background:#d1fae5;border:2px solid #6ee7b7;border-radius:14px;padding:14px 18px;margin-bottom:16px;text-align:center;">
+        <span style="font-family:Sora;font-size:1.4rem;font-weight:800;color:#065f46">${totalCorrect} / ${qData.length} Correct</span>
+        <div style="font-size:.85rem;color:#047857;margin-top:4px">${Math.round((totalCorrect / qData.length) * 100)}% Accuracy</div>
+      </div>`;
+          Object.entries(normalised)
+            .sort((a, b) => b[1] - a[1])
+            .forEach(([trait, pct]) => {
+              container.innerHTML += `
+        <div class="trait">
+          <div class="trait-label"><span>${trait}</span><span>${pct}%</span></div>
+          <div class="trait-bar-wrap"><div class="trait-bar" style="width:${pct}%"></div></div>
+        </div>`;
+            });
+          goTo("page-result");
+          return;
+        }
+
+        // ── BIGFIVE / RIASEC: likert based scoring ──
+        const traitScores = {};
+        const traitCounts = {};
+        qData.forEach((q, i) => {
+          const score = (answers[i] || 0) + 1;
+          traitScores[q.trait] = (traitScores[q.trait] || 0) + score;
+          traitCounts[q.trait] = (traitCounts[q.trait] || 0) + 1;
+        });
+        const testOptLen = tests[currentTest].options
+          ? tests[currentTest].options.length
+          : 5;
+        const normalised = {};
+        Object.keys(traitScores).forEach((t) => {
+          const sampleQ = qData.find((q) => q.trait === t);
+          const optLen =
+            sampleQ && sampleQ.options ? sampleQ.options.length : testOptLen;
+          normalised[t] = Math.round(
+            (traitScores[t] / (traitCounts[t] * optLen)) * 100,
+          );
+        });
+        const topTrait = Object.entries(normalised).sort(
+          (a, b) => b[1] - a[1],
+        )[0][0];
+
+        saveScoreForUser(currentTest, { normalised, topTrait });
+        updateTracker();
+
+        const descriptions = {
+          Openness:
+            "You are creative and curious! Careers in design, research, writing, and the arts are ideal for you.",
+          Conscientiousness:
+            "You are disciplined and dependable. Careers in management, finance, law, and medicine suit you.",
+          Extraversion:
+            "You are outgoing and energetic! Sales, teaching, media, and leadership roles are perfect for you.",
+          Agreeableness:
+            "You are kind and cooperative. Healthcare, counselling, social work, and teaching are great fits.",
+          Neuroticism:
+            "You are emotionally sensitive. Structured careers with clear goals help you thrive best.",
+          Realistic:
+            "You prefer hands-on work. Engineering, mechanics, construction, and trades are great fits.",
+          Investigative:
+            "You love analysis and research. Science, medicine, data, and technology are excellent paths.",
+          Artistic:
+            "You are creative. Fine arts, design, writing, music, and media are ideal careers.",
+          Social:
+            "You enjoy helping people. Teaching, counselling, and social work match your strengths.",
+          Enterprising:
+            "You are a natural leader. Business, law, marketing, and management are your forte.",
+          Conventional:
+            "You value order and precision. Accounting, administration, and data management suit you.",
+          Numerical:
+            "Strong numerical skills! Engineering, finance, and data science are great choices.",
+          Verbal:
+            "Strong verbal skills! Literature, law, journalism, and languages are ideal.",
+          Logical:
+            "Sharp logical thinking! Computer science, law, and strategy-based careers suit you.",
+          Spatial:
+            "Strong spatial reasoning! Architecture, design, and engineering are excellent options.",
+        };
+        const emojis = { bigfive: "🧠", riasec: "🔍", aptitude: "⚡" };
+        document.getElementById("result-emoji").textContent =
+          emojis[currentTest] || "🎉";
+        document.getElementById("result-title").textContent =
+          "Your Top Trait: " + topTrait;
+        document.getElementById("result-desc").textContent =
+          descriptions[topTrait] || "Great work completing the assessment!";
+        const container = document.getElementById("result-traits");
+        container.innerHTML =
+          '<h3 style="font-family:Sora;font-size:.95rem;margin-bottom:14px;color:var(--text)">Trait Breakdown</h3>';
+        Object.entries(normalised)
+          .sort((a, b) => b[1] - a[1])
+          .forEach(([trait, pct]) => {
+            container.innerHTML += `
+      <div class="trait">
+        <div class="trait-label"><span>${trait}</span><span>${pct}%</span></div>
+        <div class="trait-bar-wrap"><div class="trait-bar" style="width:${pct}%"></div></div>
+      </div>`;
+          });
+        goTo("page-result");
+      }
+
+      /* ── BUILD SUMMARY GRID ── */
+      function buildSummaryGrid() {
+        const grid = document.getElementById("ai-summary-grid");
+        grid.innerHTML = "";
+
+        const items = [
+          {
+            key: "riasec",
+            label: "🔍 RIASEC",
+            cls: "riasec",
+            main: savedScores.riasec ? savedScores.riasec.topTrait : "—",
+            sub: savedScores.riasec
+              ? topTraitsText(savedScores.riasec.normalised, 3)
+              : "",
+          },
+          {
+            key: "bigfive",
+            label: "🧠 Big Five",
+            cls: "bigfive",
+            main: savedScores.bigfive ? savedScores.bigfive.topTrait : "—",
+            sub: savedScores.bigfive
+              ? topTraitsText(savedScores.bigfive.normalised, 3)
+              : "",
+          },
+          {
+            key: "aptitude",
+            label: "⚡ Aptitude",
+            cls: "aptitude",
+            main: savedScores.aptitude ? savedScores.aptitude.topTrait : "—",
+            sub: savedScores.aptitude
+              ? topTraitsText(savedScores.aptitude.normalised, 3)
+              : "",
+          },
+        ];
+
+        items.forEach((item) => {
+          grid.innerHTML += `
+      <div class="summary-card ${item.cls}">
+        <h4>${item.label}</h4>
+        <p>${item.main}</p>
+        <div class="sub">${item.sub}</div>
+      </div>`;
+        });
+      }
+
+      function topTraitsText(normalised, n) {
+        return Object.entries(normalised)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, n)
+          .map(([k, v]) => k + " " + v + "%")
+          .join(" · ");
+      }
+
+      /* ══════════════════════════════════════════════════════
+   COURSE SUGGESTION FUNCTIONS
+══════════════════════════════════════════════════════ */
+
+      function openCoursePage(std) {
+        const page = std === "10th" ? "page-course-10th" : "page-course-12th";
+        loadCourseScores(std);
+        goTo(page);
+      }
+
+      function openCoursePageAuto() {
+        const std = currentClass === "12th" ? "12th" : "10th";
+        loadCourseScores(std);
+
+        if (std === "12th") {
+          // Reset all blocks first
+          ["cs", "bio", "arts"].forEach((k) => {
+            const blk = document.getElementById("cs12-block-" + k);
+            if (blk) blk.style.display = "none";
+            const sc = document.getElementById("sc-" + k);
+            if (sc) sc.classList.remove("active");
+          });
+
+          // Always show stream selector
+          const sel = document.getElementById("cs12-stream-select");
+          if (sel) sel.style.display = "block";
+
+          goTo("page-course-12th");
+        } else {
+          goTo("page-course-10th");
+        }
+      }
+
+      function loadCourseScores(std) {
+        const username = localStorage.getItem("cp_loggedIn_user");
+        const statusId = std === "10th" ? "cs10-status" : "cs12-status";
+        const gridId = std === "10th" ? "cs10-scores-grid" : "cs12-scores-grid";
+        const cardId = std === "10th" ? "cs10-scores-card" : "cs12-scores-card";
+        const statusEl = document.getElementById(statusId);
+
+        if (!username) {
+          statusEl.innerHTML = `<div class="cs-banner warn">⚠️ Not logged in. Only academic marks will be used.</div>`;
+          return;
+        }
+        let scores = null;
+        try {
+          scores = JSON.parse(localStorage.getItem("cp_scores_" + username));
+        } catch (e) {}
+
+        if (
+          !scores ||
+          !["riasec", "bigfive", "aptitude"].some((k) => scores[k])
+        ) {
+          statusEl.innerHTML = `<div class="cs-banner warn">⚠️ Complete the 3 tests in CareerPath for a better recommendation. Only marks will be used now.</div>`;
+          return;
+        }
+
+        let loaded = 0;
+        ["riasec", "bigfive", "aptitude"].forEach((k) => {
+          if (scores[k]) loaded++;
+        });
+        statusEl.innerHTML = `<div class="cs-banner ok">✅ <strong>${username}</strong>'s scores loaded! ${loaded}/3 tests. Combined analysis ready.</div>`;
+
+        const defs = [
+          { key: "riasec", cls: "riasec", icon: "🔍", label: "RIASEC" },
+          { key: "bigfive", cls: "bigfive", icon: "🧠", label: "Big Five" },
+          { key: "aptitude", cls: "apt", icon: "⚡", label: "Aptitude" },
+        ];
+        document.getElementById(gridId).innerHTML = defs
+          .map((d) => {
+            const s = scores[d.key];
+            const sub = s
+              ? Object.entries(s.normalised)
+                  .sort((a, b) => b[1] - a[1])
+                  .slice(0, 2)
+                  .map(([k, v]) => k + " " + v + "%")
+                  .join(" · ")
+              : "Not completed";
+            return `<div class="cs-score-box ${d.cls}"><h5>${d.icon} ${d.label}</h5><div class="cs-top">${s ? s.topTrait : "—"}</div><div class="cs-sub">${sub}</div></div>`;
+          })
+          .join("");
+        document.getElementById(cardId).style.display = "block";
+      }
+
+      function csRenderChips(id, items) {
+        const medals = ["🥇", "🥈", "🥉"];
+        const cls = ["gold", "silver", "bronze"];
+        document.getElementById(id).innerHTML = items
+          .map(
+            (item, i) =>
+              `<span class="cs-chip ${cls[i] || "plain"}">${medals[i] || ""} ${item}</span>`,
+          )
+          .join("");
+      }
+
+      function csRenderBars(containerId, cardId, normalised) {
+        if (!normalised) return;
+        document.getElementById(cardId).style.display = "block";
+        document.getElementById(containerId).innerHTML = Object.entries(
+          normalised,
+        )
+          .sort((a, b) => b[1] - a[1])
+          .map(
+            ([t, p]) => `
+    <div class="cs-trait-row">
+      <div class="ct-label">${t}</div>
+      <div class="ct-bar-wrap"><div class="ct-bar" style="width:${p}%"></div></div>
+      <div class="ct-pct">${p}%</div>
+    </div>`,
+          )
+          .join("");
+      }
+
+      /* ── 10TH COURSE ── */
+      function submit10thCourse() {
+        const math = parseInt(document.getElementById("c10-math").value);
+        const sci = parseInt(document.getElementById("c10-sci").value);
+        const soc = parseInt(document.getElementById("c10-soc").value);
+        const lang = parseInt(document.getElementById("c10-lang").value);
+        if ([math, sci, soc, lang].some((v) => isNaN(v) || v < 0 || v > 100)) {
+          alert("Please enter valid marks (0–100)!");
+          return;
+        }
+
+        const subjects = [
+          { name: "Mathematics", score: math },
+          { name: "Science", score: sci },
+          { name: "Social Science", score: soc },
+          { name: "Languages", score: lang },
+        ];
+        const avg = Math.round((math + sci + soc + lang) / 4);
+        const topAcad = [...subjects].sort((a, b) => b.score - a.score)[0];
+
+        // Save academic scores
+        saveScoreForUser("academic", { classLabel: "10th", subjects, avg, topSubject: topAcad.name });
+
+        const grade =
+          avg >= 90
+            ? "Outstanding 🌟"
+            : avg >= 75
+              ? "Excellent 🎉"
+              : avg >= 60
+                ? "Good 👍"
+                : avg >= 50
+                  ? "Average 📝"
+                  : "Needs Improvement 💪";
+        document.getElementById("cs10-grade").innerHTML =
+          `<span class="cs-grade-badge">Average: ${avg}% — ${grade}</span>`;
+        document.getElementById("cs10-marks-table").innerHTML =
+          subjects
+            .map(
+              (s) =>
+                `<tr><td>${s.name}</td><td><span class="cs-score-pill">${s.score}/100</span></td></tr>`,
+            )
+            .join("") +
+          `<tr><td>Overall Average</td><td><span class="cs-score-pill">${avg}/100</span></td></tr>`;
+
+        const username = localStorage.getItem("cp_loggedIn_user");
+        let sc = null;
+        try {
+          sc = JSON.parse(localStorage.getItem("cp_scores_" + username));
+        } catch (e) {}
+        const riasecTop = sc?.riasec?.topTrait || null;
+        const bigfiveTop = sc?.bigfive?.topTrait || null;
+        const aptTop = sc?.aptitude?.topTrait || null;
+
+        csRenderBars(
+          "cs10-riasec-bars",
+          "cs10-riasec-card",
+          sc?.riasec?.normalised,
+        );
+        csRenderBars(
+          "cs10-bigfive-bars",
+          "cs10-bigfive-card",
+          sc?.bigfive?.normalised,
+        );
+        csRenderBars(
+          "cs10-apt-bars",
+          "cs10-apt-card",
+          sc?.aptitude?.normalised,
+        );
+
+        let streams, courses, careers;
+        if (topAcad.name === "Mathematics") {
+          streams = ["Science (PCM)", "Commerce", "Science (PCB)"];
+          courses = [
+            "B.E / B.Tech",
+            "B.Sc Mathematics",
+            "BCA",
+            "B.Com",
+            "B.Sc Statistics",
+          ];
+          careers = [
+            "Engineer",
+            "Data Scientist",
+            "Software Developer",
+            "Accountant",
+            "Architect",
+          ];
+        } else if (topAcad.name === "Science") {
+          streams = ["Science (PCB)", "Science (PCM)", "Vocational Science"];
+          courses = [
+            "MBBS",
+            "B.Pharm",
+            "B.Sc Biotechnology",
+            "B.E Biomedical",
+            "B.Sc Nursing",
+          ];
+          careers = [
+            "Doctor",
+            "Pharmacist",
+            "Biotechnologist",
+            "Nurse",
+            "Lab Scientist",
+          ];
+        } else if (topAcad.name === "Social Science") {
+          streams = ["Arts / Humanities", "Commerce", "Science (PCM)"];
+          courses = [
+            "BA Political Science",
+            "LLB",
+            "BA Economics",
+            "BA History",
+            "B.Sc Geography",
+          ];
+          careers = [
+            "Civil Services",
+            "Lawyer",
+            "Journalist",
+            "Social Worker",
+            "Teacher",
+          ];
+        } else {
+          streams = ["Arts / Humanities", "Commerce", "Vocational"];
+          courses = [
+            "BA English",
+            "B.Com",
+            "BA Mass Communication",
+            "BA Psychology",
+            "BBA",
+          ];
+          careers = [
+            "Writer",
+            "Teacher",
+            "HR Manager",
+            "Content Creator",
+            "Counsellor",
+          ];
+        }
+
+        const rBoost = {
+          Investigative: {
+            s: "Science (PCM)",
+            c: "B.Sc Data Science",
+            ca: "Research Scientist",
+          },
+          Artistic: {
+            s: "Arts / Humanities",
+            c: "B.Des (Design)",
+            ca: "Graphic Designer",
+          },
+          Social: {
+            s: "Arts / Humanities",
+            c: "B.Sc Psychology",
+            ca: "Counsellor",
+          },
+          Enterprising: { s: "Commerce", c: "BBA", ca: "Entrepreneur" },
+          Conventional: {
+            s: "Commerce",
+            c: "B.Com",
+            ca: "Chartered Accountant",
+          },
+          Realistic: {
+            s: "Vocational / ITI",
+            c: "Diploma Engineering",
+            ca: "Technician",
+          },
+        };
+        if (riasecTop && rBoost[riasecTop]) {
+          const b = rBoost[riasecTop];
+          if (!streams.includes(b.s)) streams.splice(1, 0, b.s);
+          if (!courses.includes(b.c)) courses.splice(1, 0, b.c);
+          if (!careers.includes(b.ca)) careers.splice(1, 0, b.ca);
+        }
+
+        const aBoost = {
+          Numerical: { c: "B.Sc Statistics", ca: "Data Analyst" },
+          Verbal: { c: "BA English / Journalism", ca: "Content Writer" },
+          Logical: { c: "BCA / B.Sc CS", ca: "Programmer" },
+          Spatial: { c: "B.Arch", ca: "Architect" },
+        };
+        if (aptTop && aBoost[aptTop]) {
+          const b = aBoost[aptTop];
+          if (!courses.includes(b.c)) courses.splice(2, 0, b.c);
+          if (!careers.includes(b.ca)) careers.splice(2, 0, b.ca);
+        }
+
+        if (avg >= 85) streams.unshift("Any Stream ✨ (Top College Eligible)");
+        if (avg < 50)
+          streams = ["Vocational Training", "ITI / Diploma", ...streams];
+
+        csRenderChips("cs10-streams", [...new Set(streams)].slice(0, 5));
+        csRenderChips("cs10-careers", [...new Set(careers)].slice(0, 5));
+
+        document.getElementById("cs10-form").style.display = "none";
+        document.getElementById("cs10-result").style.display = "block";
+        window.scrollTo(0, 0);
+      }
+
+      function reset10thCourse() {
+        document.getElementById("cs10-form").style.display = "block";
+        document.getElementById("cs10-result").style.display = "none";
+        ["c10-math", "c10-sci", "c10-soc", "c10-lang"].forEach(
+          (id) => (document.getElementById(id).value = ""),
+        );
+        window.scrollTo(0, 0);
+      }
+
+      /* ── 12TH COURSE ── */
+      let selected12Stream = "";
+      function select12Stream(s) {
+        selected12Stream = s;
+        // Update stream cards if visible
+        ["cs", "bio", "arts"].forEach((k) => {
+          const el = document.getElementById("sc-" + k);
+          if (el) el.classList.remove("active");
+          // hide old cs-marks blocks (legacy)
+          const old = document.getElementById("cs-marks-" + k);
+          if (old) old.style.display = "none";
+          // hide new blocks
+          const blk = document.getElementById("cs12-block-" + k);
+          if (blk) blk.style.display = "none";
+        });
+        const card = document.getElementById("sc-" + s);
+        if (card) card.classList.add("active");
+        // show correct marks block
+        const block = document.getElementById("cs12-block-" + s);
+        if (block) block.style.display = "block";
+        // hide stream selector
+        const sel = document.getElementById("cs12-stream-select");
+        if (sel) sel.style.display = "none";
+      }
+
+      function submit12thCourse(stream) {
+        const fieldMap = {
+          cs: [
+            { id: "c12-cs-phy", name: "Physics" },
+            { id: "c12-cs-che", name: "Chemistry" },
+            { id: "c12-cs-cs", name: "Computer Science" },
+            { id: "c12-cs-mat", name: "mathematics" },
+          ],
+          bio: [
+            { id: "c12-bio-phy", name: "Physics" },
+            { id: "c12-bio-che", name: "Chemistry" },
+            { id: "c12-bio-bio", name: "Biology" },
+            { id: "c12-bio-mat", name: "mathematics" },
+          ],
+          arts: [
+            { id: "c12-arts-com", name: "Commerce/Accountancy" },
+            { id: "c12-arts-eco", name: "Economics" },
+            { id: "c12-arts-his", name: "History/Geography" },
+            { id: "c12-arts-ca", name: "computer application" },
+          ],
+        };
+        const fields = fieldMap[stream];
+        const subjects = fields.map((f) => ({
+          name: f.name,
+          score: parseInt(document.getElementById(f.id).value),
+        }));
+        if (
+          subjects.some((s) => isNaN(s.score) || s.score < 0 || s.score > 100)
+        ) {
+          alert("Please enter valid marks (0–100)!");
+          return;
+        }
+
+        const avg = Math.round(
+          subjects.reduce((a, b) => a + b.score, 0) / subjects.length,
+        );
+        const topAcad = [...subjects].sort((a, b) => b.score - a.score)[0];
+        const grade =
+          avg >= 90
+            ? "Outstanding 🌟"
+            : avg >= 75
+              ? "Excellent 🎉"
+              : avg >= 60
+                ? "Good 👍"
+                : avg >= 50
+                  ? "Average 📝"
+                  : "Needs Improvement 💪";
+        const streamLabel =
+          stream === "cs"
+            ? "Computer Science"
+            : stream === "bio"
+              ? "Biology"
+              : "Arts/Commerce";
+
+        // Save academic scores
+        saveScoreForUser("academic", { classLabel: "12th — " + streamLabel, subjects, avg, topSubject: topAcad.name });
+
+        document.getElementById("cs12-grade").innerHTML =
+          `<span class="cs-grade-badge">Average: ${avg}% — ${grade}</span>`;
+        document.getElementById("cs12-marks-table").innerHTML =
+          subjects
+            .map(
+              (s) =>
+                `<tr><td>${s.name}</td><td><span class="cs-score-pill">${s.score}/100</span></td></tr>`,
+            )
+            .join("") +
+          `<tr><td>Overall Average</td><td><span class="cs-score-pill">${avg}/100</span></td></tr>`;
+
+        const username = localStorage.getItem("cp_loggedIn_user");
+        let sc = null;
+        try {
+          sc = JSON.parse(localStorage.getItem("cp_scores_" + username));
+        } catch (e) {}
+        const riasecTop = sc?.riasec?.topTrait || null;
+        const bigfiveTop = sc?.bigfive?.topTrait || null;
+        const aptTop = sc?.aptitude?.topTrait || null;
+
+        csRenderBars(
+          "cs12-riasec-bars",
+          "cs12-riasec-card",
+          sc?.riasec?.normalised,
+        );
+        csRenderBars(
+          "cs12-bigfive-bars",
+          "cs12-bigfive-card",
+          sc?.bigfive?.normalised,
+        );
+        csRenderBars(
+          "cs12-apt-bars",
+          "cs12-apt-card",
+          sc?.aptitude?.normalised,
+        );
+
+        let courses, exams, careers;
+        if (stream === "cs") {
+          if (
+            topAcad.name === "Computer Science" ||
+            topAcad.name === "Mathematics"
+          ) {
+            courses = [
+              "B.E Computer Science",
+              "B.Tech IT",
+              "BCA",
+              "B.Sc Data Science",
+              "B.E Electronics",
+            ];
+            exams = ["JEE Main", "TNEA", "CUET", "BITSAT", "VITEEE"];
+            careers = [
+              "Software Engineer",
+              "Data Scientist",
+              "AI/ML Engineer",
+              "Cybersecurity Analyst",
+              "Web Developer",
+            ];
+          } else {
+            courses = [
+              "B.E Mechanical",
+              "B.E Civil",
+              "B.Sc Physics",
+              "B.Tech Chemical",
+              "B.E Electrical",
+            ];
+            exams = ["JEE Main", "TNEA", "CUET", "SRMJEE", "VITEEE"];
+            careers = [
+              "Mechanical Engineer",
+              "Civil Engineer",
+              "Research Scientist",
+              "Defence Engineer",
+              "IT Analyst",
+            ];
+          }
+        } else if (stream === "bio") {
+          if (topAcad.name === "Biology") {
+            courses = [
+              "MBBS",
+              "BDS (Dentistry)",
+              "B.Pharm",
+              "B.Sc Nursing",
+              "B.Sc Biotechnology",
+            ];
+            exams = ["NEET UG", "AIIMS", "JIPMER", "CUET", "State Medical CET"];
+            careers = [
+              "Doctor",
+              "Dentist",
+              "Pharmacist",
+              "Nurse",
+              "Biotechnologist",
+            ];
+          } else {
+            courses = [
+              "B.E Biomedical",
+              "B.Sc Agriculture",
+              "B.Sc Veterinary",
+              "B.Tech Food Technology",
+              "B.Sc Environmental Sci",
+            ];
+            exams = [
+              "NEET UG",
+              "ICAR AIEEA",
+              "CUET",
+              "State Agriculture CET",
+              "VITEEE",
+            ];
+            careers = [
+              "Biomedical Engineer",
+              "Agricultural Scientist",
+              "Veterinary Doctor",
+              "Food Technologist",
+              "Environmental Scientist",
+            ];
+          }
+        } else {
+          if (topAcad.name === "Commerce/Accountancy") {
+            courses = [
+              "B.Com",
+              "CA Foundation",
+              "BBA",
+              "B.Com (Hons)",
+              "B.Sc Accounting",
+            ];
+            exams = [
+              "CA Foundation",
+              "CUET",
+              "IPMAT",
+              "CLAT",
+              "State University",
+            ];
+            careers = [
+              "Chartered Accountant",
+              "Financial Analyst",
+              "Banking Professional",
+              "Auditor",
+              "Tax Consultant",
+            ];
+          } else if (topAcad.name === "Economics") {
+            courses = [
+              "BA Economics",
+              "BBA",
+              "B.Com",
+              "BA Political Science",
+              "MBA (after UG)",
+            ];
+            exams = [
+              "CUET",
+              "IPMAT",
+              "CLAT",
+              "CAT (after UG)",
+              "State University",
+            ];
+            careers = [
+              "Economist",
+              "Civil Services",
+              "Financial Planner",
+              "Policy Analyst",
+              "Banking Officer",
+            ];
+          } else {
+            courses = [
+              "BA English",
+              "BA History",
+              "BBA",
+              "B.Com",
+              "BA Mass Communication",
+            ];
+            exams = ["CUET", "CLAT", "IPMAT", "NID / NIFT", "State University"];
+            careers = [
+              "Journalist",
+              "Civil Services",
+              "HR Manager",
+              "Content Creator",
+              "Marketing Manager",
+            ];
+          }
+        }
+
+        // Aptitude boost for 12th
+        const aBoost12 = {
+          Numerical: { c: "B.Sc Statistics / Actuarial", ca: "Data Analyst" },
+          Verbal: { c: "BA English / Journalism", ca: "Content Strategist" },
+          Logical: { c: "B.Tech CS / AI", ca: "Software Architect" },
+          Spatial: { c: "B.Arch / B.Des", ca: "Architect / Designer" },
+        };
+        if (aptTop && aBoost12[aptTop]) {
+          const b = aBoost12[aptTop];
+          if (!courses.includes(b.c)) courses.splice(1, 0, b.c);
+          if (!careers.includes(b.ca)) careers.splice(1, 0, b.ca);
+        }
+        if (avg >= 85) courses.unshift("Top NIT / IIT / AIIMS (Eligible ✨)");
+
+        csRenderChips("cs12-courses", [...new Set(courses)].slice(0, 5));
+        csRenderChips("cs12-exams", [...new Set(exams)].slice(0, 5));
+        csRenderChips("cs12-careers", [...new Set(careers)].slice(0, 5));
+
+        document.getElementById("cs12-form").style.display = "none";
+        document.getElementById("cs12-result").style.display = "block";
+        window.scrollTo(0, 0);
+      }
+
+      function reset12thCourse() {
+        selected12Stream = "";
+        ["cs", "bio", "arts"].forEach((k) => {
+          const sc = document.getElementById("sc-" + k);
+          if (sc) sc.classList.remove("active");
+          const blk = document.getElementById("cs12-block-" + k);
+          if (blk) blk.style.display = "none";
+        });
+        // Re-run auto detection
+        const username = localStorage.getItem("cp_loggedIn_user");
+        let scores = null;
+        try {
+          scores = JSON.parse(localStorage.getItem("cp_scores_" + username));
+        } catch (e) {}
+        const acStream = scores?.academic?.classLabel || "";
+        let detectedStream = "";
+        if (acStream.includes("Computer Science")) detectedStream = "cs";
+        else if (acStream.includes("Biology")) detectedStream = "bio";
+        else if (acStream.includes("Arts") || acStream.includes("Commerce"))
+          detectedStream = "arts";
+
+        if (detectedStream) {
+          selected12Stream = detectedStream;
+          const blk = document.getElementById("cs12-block-" + detectedStream);
+          if (blk) blk.style.display = "block";
+          const sel = document.getElementById("cs12-stream-select");
+          if (sel) sel.style.display = "none";
+        } else {
+          const sel = document.getElementById("cs12-stream-select");
+          if (sel) sel.style.display = "block";
+        }
+
+        document.getElementById("cs12-form").style.display = "block";
+        document.getElementById("cs12-result").style.display = "none";
+        window.scrollTo(0, 0);
+      }
+
+      /* ── START FROM LOGIN PAGE ── */
+      window.onload = () => {
+        // If came from dashboard, show a back button
+        if (localStorage.getItem("cp_return_to") === "dashboard") {
+          const backBar = document.createElement("div");
+          backBar.style.cssText =
+            "position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#0d0a2e 0%,#1a1645 50%,#0f172a 100%);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 3px 20px rgba(0,0,0,.4);border-bottom:1px solid rgba(255,255,255,.07);";
+          backBar.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#4f46e5,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:.95rem;box-shadow:0 4px 12px rgba(79,70,229,.5);">🎯</div>
+        <div>
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:.92rem;color:#fff;letter-spacing:.01em;">CareerPath AI</div>
+          <div style="font-size:.62rem;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-top:1px;">Assessments</div>
+        </div>
+      </div>
+      <button onclick="window.location.href='/dashboard/'" style="display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);color:rgba(255,255,255,.85);font-size:.8rem;font-weight:700;font-family:'Sora',sans-serif;padding:8px 18px;border-radius:9px;cursor:pointer;transition:all .2s;letter-spacing:.01em;"
+        onmouseover="this.style.background='rgba(255,255,255,.13)';this.style.borderColor='rgba(255,255,255,.22)'"
+        onmouseout="this.style.background='rgba(255,255,255,.07)';this.style.borderColor='rgba(255,255,255,.12)'">
+        ← Back to Dashboard
+      </button>`;
+          document.body.prepend(backBar);
+          document.body.style.paddingTop = "58px";
+        }
+
+        // Check URL param for direct test navigation
+        const params = new URLSearchParams(window.location.search);
+        const testParam = params.get("test");
+
+        // Auto-login if already logged in
+        const alreadyUser = localStorage.getItem("cp_loggedIn_user");
+        const alreadyIn = localStorage.getItem("cp_loggedIn");
+        if (alreadyUser && alreadyIn === "true") {
+          document.getElementById("display-username").textContent = alreadyUser;
+          document.getElementById("display-username2").textContent = alreadyUser;
+          loadScoresForUser(alreadyUser);
+          goTo("page-class");
+        } else {
+          goTo("page-login");
+        }
+
+        // After login, auto-navigate to the requested test
+        // Store the target so login() can redirect after auth
+        if (testParam) {
+          localStorage.setItem("cp_direct_test", testParam);
+        } else {
+          localStorage.removeItem("cp_direct_test");
+        }
+      };
+    </script>
+
+    <!-- ═══════════════ PAGE 16: 10TH COURSE SUGGESTION ═══════════════ -->
+    <div id="page-course-10th" class="page">
+      <div class="cs-wrap">
+        <button class="back-btn" onclick="goTo('page-ai-result')">
+          ← Back to Recommendation
+        </button>
+        <div class="cs-header">
+          <div class="cs-badge">📘 10th Standard</div>
+          <h1>Course Suggestion</h1>
+          <p>
+            RIASEC + Big Five + Aptitude + Academic Marks — combined analysis
+          </p>
+        </div>
+
+        <!-- FORM -->
+        <div id="cs10-form">
+          <div id="cs10-status"></div>
+          <div id="cs10-scores-card" style="display: none">
+            <div class="cs-card">
+              <div class="cs-card-title">📋 Your Test Scores</div>
+              <div class="cs-score-grid" id="cs10-scores-grid"></div>
+            </div>
+          </div>
+          <div class="cs-card">
+            <div class="cs-card-title">
+              📝 Enter Your 10th Marks (out of 100)
+            </div>
+            <div class="cs-field">
+              <label>Mathematics</label
+              ><input
+                type="number"
+                id="c10-math"
+                min="0"
+                max="100"
+                placeholder="0–100"
+              />
+            </div>
+            <div class="cs-field">
+              <label>Science</label
+              ><input
+                type="number"
+                id="c10-sci"
+                min="0"
+                max="100"
+                placeholder="0–100"
+              />
+            </div>
+            <div class="cs-field">
+              <label>Social Science</label
+              ><input
+                type="number"
+                id="c10-soc"
+                min="0"
+                max="100"
+                placeholder="0–100"
+              />
+            </div>
+            <div class="cs-field">
+              <label>Languages (Average)</label
+              ><input
+                type="number"
+                id="c10-lang"
+                min="0"
+                max="100"
+                placeholder="0–100"
+              />
+            </div>
+            <button class="btn btn-success" onclick="submit10thCourse()">
+              🔍 Get Combined Course Suggestions
+            </button>
+          </div>
+        </div>
+
+        <!-- RESULT -->
+        <div class="cs-result" id="cs10-result">
+          <div class="cs-card">
+            <div class="cs-rc-header">
+              <span class="cs-rc-icon">📊</span>
+              <div class="cs-rc-title">Academic Performance</div>
+            </div>
+            <div id="cs10-grade"></div>
+            <table class="cs-marks-table" id="cs10-marks-table"></table>
+          </div>
+          <div class="cs-card" id="cs10-riasec-card" style="display: none">
+            <div class="cs-rc-header">
+              <span class="cs-rc-icon">🔍</span>
+              <div class="cs-rc-title">RIASEC Interest Profile</div>
+            </div>
+            <div id="cs10-riasec-bars"></div>
+          </div>
+          <div class="cs-card" id="cs10-bigfive-card" style="display: none">
+            <div class="cs-rc-header">
+              <span class="cs-rc-icon">🧠</span>
+              <div class="cs-rc-title">Big Five Personality</div>
+            </div>
+            <div id="cs10-bigfive-bars"></div>
+          </div>
+          <div class="cs-card" id="cs10-apt-card" style="display: none">
+            <div class="cs-rc-header">
+              <span class="cs-rc-icon">⚡</span>
+              <div class="cs-rc-title">Aptitude Skills</div>
+            </div>
+            <div id="cs10-apt-bars"></div>
+          </div>
+          <div class="cs-card">
+            <div class="cs-rc-header">
+              <span class="cs-rc-icon">🏫</span>
+              <div class="cs-rc-title">Recommended 11th Standard Streams</div>
+            </div>
+            <div class="cs-chip-grid" id="cs10-streams"></div>
+          </div>
+          <div class="cs-card">
+            <div class="cs-rc-header">
+              <span class="cs-rc-icon">💼</span>
+              <div class="cs-rc-title">Career Paths</div>
+            </div>
+            <div class="cs-chip-grid" id="cs10-careers"></div>
+          </div>
+          <button
+            class="btn"
+            onclick="reset10thCourse()"
+            style="margin-top: 4px"
+          >
+            ← Enter Marks Again
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE 17: 12TH COURSE SUGGESTION ═══════════════ -->
+    <div id="page-course-12th" class="page">
+      <div class="cs-wrap">
+        <button class="back-btn" onclick="goTo('page-ai-result')">
+          ← Back to Recommendation
+        </button>
+        <div class="cs-header">
+          <div class="cs-badge" style="background: #7c3aed">
+            🎓 12th Standard
+          </div>
+          <h1>Course Suggestion</h1>
+          <p>Select your stream + enter marks for AI-powered recommendations</p>
+        </div>
+
+        <!-- FORM -->
+        <div id="cs12-form">
+          <div id="cs12-status"></div>
+          <div id="cs12-scores-card" style="display: none">
+            <div class="cs-card">
+              <div class="cs-card-title">📋 Your Test Scores</div>
+              <div class="cs-score-grid" id="cs12-scores-grid"></div>
+            </div>
+          </div>
+
+          <!-- Stream selector (hidden by default, shown only if auto-detect fails) -->
+          <div id="cs12-stream-select" style="display: none">
+            <div class="cs-card">
+              <div class="cs-card-title">🏫 Select Your 12th Stream</div>
+              <div class="cs-stream-grid">
+                <div
+                  class="cs-stream-card"
+                  id="sc-cs"
+                  onclick="select12Stream('cs')"
+                >
+                  <span class="ss-icon">💻</span>
+                  <h4>Computer Science</h4>
+                </div>
+                <div
+                  class="cs-stream-card"
+                  id="sc-bio"
+                  onclick="select12Stream('bio')"
+                >
+                  <span class="ss-icon">🧬</span>
+                  <h4>Biology Group</h4>
+                </div>
+                <div
+                  class="cs-stream-card"
+                  id="sc-arts"
+                  onclick="select12Stream('arts')"
+                >
+                  <span class="ss-icon">📚</span>
+                  <h4>Arts / Commerce</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CS Marks -->
+          <div id="cs12-block-cs" style="display: none">
+            <div class="cs-card">
+              <div class="cs-card-title">
+                💻 Computer Science Group — Enter Marks (out of 100)
+              </div>
+              <div class="cs-field">
+                <label>Physics</label
+                ><input
+                  type="number"
+                  id="c12-cs-phy"
+                  min="0"
+                  max="100"
+                  placeholder="0–100"
+                />
+              </div>
+              <div class="cs-field">
+                <label>Chemistry</label
+                ><input
+                  type="number"
+                  id="c12-cs-che"
+                  min="0"
+                  max="100"
+                  placeholder="0–100"
+                />
+              </div>
+              <div class="cs-field">
+                <label>Computer Science</label
+                ><input
+                  type="number"
+                  id="c12-cs-cs"
+                  min="0"
+                  max="100"
+                  placeholder="0–100"
+                />
+              </div>
+              <div class="cs-field">
+                <label>Mathematics</label
+                ><input
+                  type="number"
+                  id="c12-cs-mat"
+                  min="0"
+                  max="100"
+                  placeholder="0–100"
+                />
+              </div>
+
+              <button class="btn btn-success" onclick="submit12thCourse('cs')">
+                🔍 Get Course Suggestions
+              </button>
+            </div>
+          </div>
+
+          <!-- Bio Marks -->
+          <div id="cs12-block-bio" style="display: none">
+            <div class="cs-card">
+              <div class="cs-card-title">
+                🧬 Biology Group — Enter Marks (out of 100)
+              </div>
+              <div class="cs-field">
+                <label>Physics</label
+                ><input
+                  type="number"
+                  id="c12-bio-phy"
+                  min="0"
+                  max="100"
+                  placeholder="0–100"
+                />
+              </div>
+              <div class="cs-field">
+                <label>Chemistry</label
+                ><input
+                  type="number"
+                  id="c12-bio-che"
+                  min="0"
+                  max="100"
+                  placeholder="0–100"
+                />
+              </div>
+              <div class="cs-field">
+                <label>Biology</label
+                ><input
+                  type="number"
+                  id="c12-bio-bio"
+                  min="0"
+                  max="100"
+                  placeholder="0–100"
+                />
+              </div>
+              <div class="cs-field">
+                <label>Mathematics</label
+                ><input
+                  type="number"
+                  id="c12-bio-mat"
+                  min="0"
+                  max="100"
+                  placeholder="0–100"
+                />
+              </div>
+
+              <button class="btn btn-success" onclick="submit12thCourse('bio')">
+                🔍 Get Course Suggestions
+              </button>
+            </div>
+          </div>
+
+          <!-- Arts Marks -->
+          <div id="cs12-block-arts" style="display: none">
+            <div class="cs-card">
+              <div class="cs-card-title">
+                📚 Arts / Commerce Group — Enter Marks (out of 100)
+              </div>
+              <div class="cs-field">
+                <label>Commerce / Accountancy</label
+                ><input
+                  type="number"
+                  id="c12-arts-com"
+                  min="0"
+                  max="100"
+                  placeholder="0–100"
+                />
+              </div>
+              <div class="cs-field">
+                <label>Economics</label
+                ><input
+                  type="number"
+                  id="c12-arts-eco"
+                  min="0"
+                  max="100"
+                  placeholder="0–100"
+                />
+              </div>
+              <div class="cs-field">
+                <label>History / Geography</label
+                ><input
+                  type="number"
+                  id="c12-arts-his"
+                  min="0"
+                  max="100"
+                  placeholder="0–100"
+                />
+              </div>
+              <div class="cs-field">
+                <label>Computer application</label
+                ><input
+                  type="number"
+                  id="c12-arts-ca"
+                  min="0"
+                  max="100"
+                  placeholder="0–100"
+                />
+              </div>
+
+              <button
+                class="btn btn-success"
+                onclick="submit12thCourse('arts')"
+              >
+                🔍 Get Course Suggestions
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESULT -->
+        <div class="cs-result" id="cs12-result">
+          <div class="cs-card">
+            <div class="cs-rc-header">
+              <span class="cs-rc-icon">📊</span>
+              <div class="cs-rc-title">Academic Performance</div>
+            </div>
+            <div id="cs12-grade"></div>
+            <table class="cs-marks-table" id="cs12-marks-table"></table>
+          </div>
+          <div class="cs-card" id="cs12-riasec-card" style="display: none">
+            <div class="cs-rc-header">
+              <span class="cs-rc-icon">🔍</span>
+              <div class="cs-rc-title">RIASEC Interest Profile</div>
+            </div>
+            <div id="cs12-riasec-bars"></div>
+          </div>
+          <div class="cs-card" id="cs12-bigfive-card" style="display: none">
+            <div class="cs-rc-header">
+              <span class="cs-rc-icon">🧠</span>
+              <div class="cs-rc-title">Big Five Personality</div>
+            </div>
+            <div id="cs12-bigfive-bars"></div>
+          </div>
+          <div class="cs-card" id="cs12-apt-card" style="display: none">
+            <div class="cs-rc-header">
+              <span class="cs-rc-icon">⚡</span>
+              <div class="cs-rc-title">Aptitude Skills</div>
+            </div>
+            <div id="cs12-apt-bars"></div>
+          </div>
+          <div class="cs-card">
+            <div class="cs-rc-header">
+              <span class="cs-rc-icon">🎓</span>
+              <div class="cs-rc-title">Recommended UG Courses</div>
+            </div>
+            <div class="cs-chip-grid" id="cs12-courses"></div>
+          </div>
+          <div class="cs-card">
+            <div class="cs-rc-header">
+              <span class="cs-rc-icon">🏆</span>
+              <div class="cs-rc-title">Entrance Exams to Prepare</div>
+            </div>
+            <div class="cs-chip-grid" id="cs12-exams"></div>
+          </div>
+          <div class="cs-card">
+            <div class="cs-rc-header">
+              <span class="cs-rc-icon">💼</span>
+              <div class="cs-rc-title">Career Paths</div>
+            </div>
+            <div class="cs-chip-grid" id="cs12-careers"></div>
+          </div>
+          <button
+            class="btn"
+            onclick="reset12thCourse()"
+            style="margin-top: 4px"
+          >
+            ← Enter Marks Again
+          </button>
+        </div>
+      </div>
+    </div>
+   function saveData(studentClass) {
+    fetch("http://127.0.0.1:8000/save/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ student_class: studentClass })
+    })
+    .then(res => res.json())
+    .then(data => console.log(data));
+}
+
+// Example calls
+saveData("10th");
+saveData("12th");
+  </body>
+</html>

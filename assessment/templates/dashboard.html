@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CareerPath AI — Student Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --p: #4f46e5; --pd: #3730a3; --pl: #ede9fe;
+  --a: #06b6d4; --al: #cffafe;
+  --g: #10b981; --gl: #d1fae5;
+  --w: #f59e0b; --wl: #fef3c7;
+  --r: #ef4444; --rl: #fee2e2;
+  --v: #8b5cf6; --vl: #f5f3ff;
+  --bg: #f0f4ff;
+  --card: #ffffff;
+  --text: #1e1b4b;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --sh: 0 4px 24px rgba(79,70,229,.10);
+  --sh-lg: 0 16px 56px rgba(79,70,229,.18);
+  --sb: 260px;
+  --bar: 68px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;display:flex;overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 10% 5%, rgba(79,70,229,.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 90% 95%, rgba(6,182,212,.07) 0%, transparent 70%);
+}
+
+/* ══════════ SIDEBAR ══════════ */
+.sidebar{
+  width:var(--sb);min-height:100vh;
+  background:linear-gradient(165deg,#0d0a2e 0%,#1a1645 40%,#0f172a 100%);
+  position:fixed;left:0;top:0;z-index:100;
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:transform .4s cubic-bezier(.34,1.3,.64,1);
+}
+.sidebar::before{content:'';position:absolute;width:300px;height:300px;
+  background:radial-gradient(circle,rgba(79,70,229,.35),transparent 65%);
+  top:-100px;left:-80px;pointer-events:none;}
+.sidebar::after{content:'';position:absolute;width:220px;height:220px;
+  background:radial-gradient(circle,rgba(6,182,212,.2),transparent 65%);
+  bottom:80px;right:-70px;pointer-events:none;}
+
+.sb-top{padding:26px 22px 18px;border-bottom:1px solid rgba(255,255,255,.07);position:relative;z-index:1;}
+.sb-logo{display:flex;align-items:center;gap:11px;margin-bottom:20px;}
+.sb-logo-mark{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,#4f46e5,#06b6d4);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+  box-shadow:0 4px 14px rgba(79,70,229,.5);}
+.sb-logo-text{font-family:'Sora',sans-serif;font-weight:800;font-size:.95rem;color:#fff;letter-spacing:.01em;}
+.sb-logo-sub{font-size:.64rem;color:rgba(255,255,255,.4);font-weight:500;text-transform:uppercase;letter-spacing:.08em;}
+
+.sb-user{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:13px 15px;
+  display:flex;align-items:center;gap:11px;cursor:default;transition:background .2s;}
+.sb-user:hover{background:rgba(255,255,255,.11);}
+.sb-av{width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,#4f46e5,#06b6d4);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Sora',sans-serif;font-size:.85rem;font-weight:800;color:#fff;flex-shrink:0;
+  box-shadow:0 0 0 3px rgba(79,70,229,.3);}
+.sb-uname{font-size:.85rem;font-weight:700;color:#fff;}
+.sb-urole{font-size:.68rem;color:rgba(255,255,255,.4);margin-top:1px;text-transform:uppercase;letter-spacing:.05em;}
+.sb-pulse{width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;margin-left:auto;flex-shrink:0;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+
+.sb-nav{padding:10px 12px;flex:1;position:relative;z-index:1;overflow-y:auto;}
+.sb-nav::-webkit-scrollbar{width:0;}
+.sb-sec-label{font-size:.62rem;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:.12em;font-weight:700;padding:0 10px;margin:14px 0 6px;}
+
+.sb-btn{
+  display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;
+  color:rgba(255,255,255,.6);font-size:.85rem;font-weight:600;
+  cursor:pointer;border:none;background:transparent;width:100%;text-align:left;
+  transition:all .22s;margin-bottom:2px;position:relative;overflow:hidden;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.sb-btn::before{content:'';position:absolute;inset:0;border-radius:11px;
+  background:linear-gradient(135deg,rgba(79,70,229,.5),rgba(124,58,237,.4));
+  opacity:0;transition:opacity .22s;}
+.sb-btn:hover{color:#fff;transform:translateX(3px);}
+.sb-btn:hover::before,.sb-btn.on::before{opacity:1;}
+.sb-btn.on{color:#fff;}
+.sbi{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;position:relative;z-index:1;transition:transform .22s;}
+.sb-btn:hover .sbi{transform:scale(1.1);}
+.sbi.i0{background:linear-gradient(135deg,#4f46e5,#7c3aed);}
+.sbi.i1{background:linear-gradient(135deg,#059669,#06b6d4);}
+.sbi.i2{background:linear-gradient(135deg,#f59e0b,#ef4444);}
+.sbi.i3{background:linear-gradient(135deg,#8b5cf6,#ec4899);}
+.sbi.i4{background:linear-gradient(135deg,#0ea5e9,#22d3ee);}
+.sbi.i5{background:linear-gradient(135deg,#64748b,#374151);}
+.sb-btn-txt{position:relative;z-index:1;}
+.sb-btn-txt strong{display:block;font-size:.83rem;}
+.sb-btn-txt small{display:block;font-size:.66rem;color:rgba(255,255,255,.38);margin-top:1px;}
+.sb-badge{margin-left:auto;background:linear-gradient(135deg,#4f46e5,#06b6d4);color:#fff;
+  font-size:.62rem;font-weight:800;padding:2px 8px;border-radius:99px;position:relative;z-index:1;}
+
+.sb-foot{padding:14px 20px;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:1;}
+.sb-logout{display:flex;align-items:center;gap:9px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.18);
+  border-radius:10px;padding:10px 14px;color:#fca5a5;font-size:.83rem;font-weight:700;
+  cursor:pointer;transition:all .2s;width:100%;font-family:'Plus Jakarta Sans',sans-serif;}
+.sb-logout:hover{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.3);}
+
+/* ══════════ MAIN ══════════ */
+.main{margin-left:var(--sb);flex:1;min-height:100vh;display:flex;flex-direction:column;}
+
+/* TOPBAR */
+.topbar{
+  height:var(--bar);background:rgba(255,255,255,.92);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(79,70,229,.07);
+  display:flex;align-items:center;justify-content:space-between;padding:0 30px;
+  position:sticky;top:0;z-index:50;
+  box-shadow:0 2px 16px rgba(79,70,229,.06);
+}
+.tb-l{display:flex;flex-direction:column;}
+.tb-title{font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:800;color:var(--text);}
+.tb-sub{font-size:.72rem;color:var(--muted);margin-top:1px;}
+.tb-r{display:flex;align-items:center;gap:12px;}
+.tb-icon{width:38px;height:38px;border-radius:9px;border:1.5px solid var(--border);
+  background:#fff;display:flex;align-items:center;justify-content:center;font-size:.95rem;
+  cursor:pointer;position:relative;transition:all .18s;}
+.tb-icon:hover{border-color:var(--p);background:var(--pl);}
+.tb-icon.notif::after{content:'';position:absolute;top:5px;right:5px;width:7px;height:7px;
+  background:var(--r);border-radius:50%;border:2px solid #fff;}
+.tb-chip{display:flex;align-items:center;gap:8px;background:var(--pl);
+  border:1.5px solid rgba(79,70,229,.2);border-radius:99px;padding:5px 14px 5px 5px;cursor:pointer;transition:all .18s;}
+.tb-chip:hover{background:#ddd6fe;}
+.tb-chip-av{width:26px;height:26px;border-radius:50%;
+  background:linear-gradient(135deg,#4f46e5,#06b6d4);
+  display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;color:#fff;}
+.tb-chip-name{font-size:.8rem;font-weight:700;color:var(--p);}
+
+/* ══════════ CONTENT ══════════ */
+.content{padding:28px 30px;flex:1;}
+.section{display:none;animation:fadeUp .38s ease;}
+.section.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+/* ══════════ WELCOME ══════════ */
+.welcome{
+  background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 45%,#06b6d4 100%);
+  border-radius:22px;padding:30px 34px;color:#fff;margin-bottom:24px;
+  position:relative;overflow:hidden;
+}
+.welcome::before{content:'';position:absolute;width:350px;height:350px;
+  background:radial-gradient(circle,rgba(255,255,255,.12),transparent 65%);
+  top:-130px;right:-50px;pointer-events:none;}
+.welcome::after{content:'';position:absolute;width:180px;height:180px;
+  background:radial-gradient(circle,rgba(255,255,255,.07),transparent 65%);
+  bottom:-70px;left:50px;}
+.w-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px;}
+.w-tag{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.7);margin-bottom:6px;}
+.w-inner h2{font-family:'Sora',sans-serif;font-size:1.75rem;font-weight:800;margin-bottom:7px;line-height:1.25;}
+.w-inner p{font-size:.87rem;color:rgba(255,255,255,.82);line-height:1.65;max-width:430px;}
+.w-cta{margin-top:16px;background:#fff;color:var(--p);border:none;padding:11px 24px;
+  border-radius:11px;font-size:.85rem;font-weight:800;font-family:'Sora',sans-serif;
+  cursor:pointer;transition:all .2s;box-shadow:0 4px 18px rgba(0,0,0,.16);}
+.w-cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.22);}
+.w-emo{font-size:4.5rem;line-height:1;position:relative;z-index:1;}
+
+/* ══════════ STATS ══════════ */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat{background:#fff;border-radius:18px;padding:20px 18px;box-shadow:var(--sh);
+  border:1.5px solid transparent;transition:all .25s;position:relative;overflow:hidden;}
+.stat:hover{transform:translateY(-4px);box-shadow:var(--sh-lg);border-color:var(--p);}
+.stat::after{content:'';position:absolute;top:0;right:0;width:70px;height:70px;border-radius:0 18px 0 70px;opacity:.06;}
+.st-p::after{background:var(--p);} .st-g::after{background:var(--g);} .st-w::after{background:var(--w);} .st-a::after{background:var(--a);}
+.stat-ico{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;margin-bottom:10px;}
+.st-p .stat-ico{background:var(--pl);} .st-g .stat-ico{background:var(--gl);} .st-w .stat-ico{background:var(--wl);} .st-a .stat-ico{background:var(--al);}
+.stat-val{font-family:'Sora',sans-serif;font-size:1.75rem;font-weight:800;color:var(--text);line-height:1;}
+.stat-lbl{font-size:.74rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:5px;}
+.stat-trend{font-size:.72rem;font-weight:700;margin-top:6px;display:flex;align-items:center;gap:4px;}
+.tr-up{color:var(--g);} .tr-w{color:var(--w);} .tr-b{color:var(--p);}
+
+/* ══════════ GRID ══════════ */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:18px;}
+.span2{grid-column:1/-1;}
+
+.card{background:#fff;border-radius:18px;padding:24px 22px;box-shadow:var(--sh);border:1.5px solid transparent;transition:border-color .2s;}
+.card:hover{border-color:rgba(79,70,229,.12);}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.ct{font-family:'Sora',sans-serif;font-size:.95rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:7px;}
+.ct em{font-style:normal;font-size:1rem;}
+.ca{font-size:.76rem;font-weight:700;color:var(--p);cursor:pointer;border:none;background:none;
+  font-family:'Plus Jakarta Sans',sans-serif;padding:5px 11px;border-radius:7px;transition:background .15s;}
+.ca:hover{background:var(--pl);}
+
+/* ══════════ PROGRESS STEPS ══════════ */
+.steps{display:flex;flex-direction:column;gap:11px;}
+.step{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:11px;border:1.5px solid var(--border);transition:all .2s;}
+.step.done{background:#f0fdf4;border-color:#bbf7d0;}
+.step.active-s{background:#eff6ff;border-color:#bfdbfe;}
+.step.locked{opacity:.5;}
+.step-ck{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;}
+.step.done .step-ck{background:var(--g);border-color:var(--g);color:#fff;}
+.step.active-s .step-ck{background:var(--p);border-color:var(--p);color:#fff;}
+.step-n{font-size:.85rem;font-weight:700;color:var(--text);}
+.step-s{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.sbadge{margin-left:auto;padding:3px 10px;border-radius:99px;font-size:.7rem;font-weight:800;flex-shrink:0;}
+.bd-done{background:var(--gl);color:#065f46;} .bd-next{background:#dbeafe;color:#1e40af;} .bd-lock{background:#f3f4f6;color:#6b7280;}
+
+/* ══════════ ACTIVITY ══════════ */
+.acts{display:flex;flex-direction:column;}
+.act{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #f3f4f6;}
+.act:last-child{border-bottom:none;}
+.act-d{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
+.ad-p{background:var(--pl);} .ad-g{background:var(--gl);} .ad-w{background:var(--wl);} .ad-a{background:var(--al);}
+.act-n{font-size:.84rem;font-weight:700;color:var(--text);}
+.act-t{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.act-sc{margin-left:auto;font-size:.74rem;font-weight:800;color:var(--p);background:var(--pl);padding:3px 10px;border-radius:99px;flex-shrink:0;}
+
+/* ══════════ SKILL BARS ══════════ */
+.skills{display:flex;flex-direction:column;gap:13px;}
+.sk-row{display:flex;align-items:center;gap:10px;}
+.sk-lbl{width:126px;flex-shrink:0;font-size:.8rem;font-weight:600;color:var(--text);}
+.sk-track{flex:1;background:#f3f4f6;border-radius:99px;height:8px;overflow:hidden;}
+.sk-fill{height:8px;border-radius:99px;background:linear-gradient(90deg,var(--p),var(--a));transition:width 1.4s cubic-bezier(.22,.68,0,1.2);width:0;}
+.sk-pct{width:34px;text-align:right;font-size:.76rem;font-weight:800;color:var(--p);}
+
+/* ══════════ PERSONALITY CHIPS ══════════ */
+.per-g{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:16px;}
+.per{border-radius:13px;padding:13px 14px;display:flex;align-items:center;gap:11px;}
+.per.a{background:#fef3c7;border:1.5px solid #fde68a;} .per.b{background:#ede9fe;border:1.5px solid #c4b5fd;}
+.per.c{background:#d1fae5;border:1.5px solid #6ee7b7;} .per.d{background:#dbeafe;border:1.5px solid #93c5fd;}
+.per-ico{font-size:1.5rem;}
+.per-lbl{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
+.per-val{font-family:'Sora',sans-serif;font-size:.87rem;font-weight:800;color:var(--text);margin-top:2px;}
+
+/* ══════════ ASSESS TILES ══════════ */
+.at-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.at{border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;
+  border:2px solid transparent;transition:all .25s;}
+.at:hover{transform:translateY(-5px);box-shadow:0 14px 36px rgba(79,70,229,.18);}
+.at1{background:linear-gradient(135deg,#ede9fe,#ddd6fe);border-color:#c4b5fd;}
+.at2{background:linear-gradient(135deg,#d1fae5,#a7f3d0);border-color:#6ee7b7;}
+.at3{background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:#fcd34d;}
+.at4{background:linear-gradient(135deg,#dbeafe,#bfdbfe);border-color:#93c5fd;}
+.at5{background:linear-gradient(135deg,#fce7f3,#fbcfe8);border-color:#f9a8d4;}
+.at6{background:linear-gradient(135deg,#cffafe,#a5f3fc);border-color:#67e8f9;}
+.at7{background:linear-gradient(135deg,#fdf2f8,#fce7f3);border-color:#f0abfc;}
+.at8{background:linear-gradient(135deg,#f0fdf4,#bbf7d0);border-color:#4ade80;}
+.at9{background:linear-gradient(135deg,#fff7ed,#fed7aa);border-color:#fb923c;}
+.at10{background:linear-gradient(135deg,#f8fafc,#e2e8f0);border-color:#94a3b8;}
+
+/* ══════════ COURSE SUGGESTIONS ══════════ */
+.cs-section{margin-top:28px;}
+.cs-header{font-family:'Sora',sans-serif;font-size:1rem;font-weight:800;color:var(--text);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+.cs-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.cs-tab{padding:7px 18px;border-radius:99px;font-size:.78rem;font-weight:700;cursor:pointer;border:2px solid var(--border);background:#fff;color:var(--muted);transition:all .2s;}
+.cs-tab.on{background:var(--p);border-color:var(--p);color:#fff;}
+.cs-tab:hover:not(.on){border-color:var(--p);color:var(--p);}
+.cs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.cs-card{background:#fff;border-radius:16px;padding:18px 16px;border:2px solid var(--border);transition:all .25s;cursor:pointer;position:relative;overflow:hidden;}
+.cs-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(79,70,229,.15);border-color:var(--p);}
+.cs-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;}
+.cs-card.tier1::before{background:linear-gradient(90deg,#f59e0b,#ef4444);}
+.cs-card.tier2::before{background:linear-gradient(90deg,#4f46e5,#06b6d4);}
+.cs-card.tier3::before{background:linear-gradient(90deg,#10b981,#22d3ee);}
+.cs-ico{font-size:1.8rem;margin-bottom:10px;display:block;}
+.cs-name{font-family:'Sora',sans-serif;font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px;}
+.cs-univ{font-size:.72rem;color:var(--muted);margin-bottom:10px;line-height:1.45;}
+.cs-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.cs-tg{padding:3px 9px;border-radius:99px;font-size:.66rem;font-weight:700;}
+.tg-match{background:var(--gl);color:#065f46;}
+.tg-dur{background:var(--al);color:#164e63;}
+.tg-stream{background:var(--pl);color:#4f46e5;}
+.cs-match{position:absolute;top:12px;right:12px;font-size:.68rem;font-weight:800;background:var(--p);color:#fff;padding:3px 9px;border-radius:99px;}
+.cs-empty{text-align:center;padding:32px;grid-column:1/-1;}
+.cs-empty span{font-size:2.5rem;display:block;margin-bottom:8px;}
+.cs-empty p{font-size:.85rem;color:var(--muted);}
+
+/* ══════════ EDUTHURU AI BLOCK ══════════ */
+.edu-block{background:linear-gradient(135deg,#0d0a2e 0%,#1a1645 60%,#0f172a 100%);border-radius:18px;padding:22px 24px;margin-top:18px;position:relative;overflow:hidden;}
+.edu-block::before{content:'';position:absolute;width:260px;height:260px;background:radial-gradient(circle,rgba(79,70,229,.4),transparent 65%);top:-80px;right:-60px;pointer-events:none;}
+.edu-inner{position:relative;z-index:1;}
+.edu-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.edu-logo{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#f59e0b,#ef4444);display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 4px 14px rgba(245,158,11,.4);}
+.edu-title{font-family:'Sora',sans-serif;font-size:.95rem;font-weight:800;color:#fff;}
+.edu-sub{font-size:.7rem;color:rgba(255,255,255,.45);margin-top:1px;}
+.edu-msg{font-size:.83rem;color:rgba(255,255,255,.8);line-height:1.65;margin-bottom:14px;}
+.edu-pills{display:flex;flex-wrap:wrap;gap:7px;}
+.edu-pill{padding:5px 13px;border-radius:99px;font-size:.72rem;font-weight:700;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);}
+.at-ico{font-size:2rem;margin-bottom:9px;display:block;}
+.at-name{font-family:'Sora',sans-serif;font-size:.8rem;font-weight:800;color:var(--text);margin-bottom:4px;}
+.at-desc{font-size:.7rem;color:var(--muted);line-height:1.45;}
+.at-tag{margin-top:11px;display:inline-block;padding:4px 12px;border-radius:99px;font-size:.68rem;font-weight:800;}
+.at-done{background:var(--gl);color:#065f46;} .at-pend{background:var(--pl);color:var(--p);} .at-lock{background:#f3f4f6;color:#6b7280;}
+
+/* ══════════ RESULTS ══════════ */
+.res-g{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.rseg{border-radius:16px;padding:20px 18px;border:2px solid transparent;}
+.rs1{background:linear-gradient(135deg,#fffbeb,#fef3c7);border-color:#fde68a;}
+.rs2{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-color:#c4b5fd;}
+.rs3{background:linear-gradient(135deg,#f0fdf4,#d1fae5);border-color:#6ee7b7;}
+.rs4{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#93c5fd;}
+.rsh{display:flex;align-items:center;gap:9px;margin-bottom:14px;}
+.rsh-ico{font-size:1.5rem;}
+.rsh-t{font-family:'Sora',sans-serif;font-size:.88rem;font-weight:800;color:var(--text);}
+.rsh-b{margin-left:auto;padding:3px 10px;border-radius:99px;font-size:.68rem;font-weight:800;}
+.rb-d{background:var(--g);color:#fff;} .rb-p{background:var(--w);color:#fff;}
+.mini-bars{display:flex;flex-direction:column;gap:7px;}
+.mb-row{display:flex;align-items:center;gap:7px;}
+.mb-lbl{width:110px;font-size:.72rem;font-weight:600;color:var(--text);flex-shrink:0;}
+.mb-track{flex:1;background:rgba(255,255,255,.7);border-radius:99px;height:6px;overflow:hidden;}
+.mb-fill{height:6px;border-radius:99px;}
+.mb-val{width:28px;text-align:right;font-size:.7rem;font-weight:800;}
+.no-d{text-align:center;padding:16px;}
+.no-d span{font-size:2rem;display:block;margin-bottom:6px;}
+.no-d p{font-size:.8rem;color:var(--muted);}
+
+/* ══════════ CAREER ══════════ */
+.career-list{display:flex;flex-direction:column;gap:11px;}
+.career-item{display:flex;align-items:center;gap:12px;padding:13px 15px;
+  border-radius:13px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s;}
+.career-item:hover{border-color:var(--p);background:var(--pl);transform:translateX(4px);}
+.ci-rank{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:.74rem;font-weight:800;color:#fff;flex-shrink:0;}
+.rk1{background:linear-gradient(135deg,#f59e0b,#ef4444);}
+.rk2{background:linear-gradient(135deg,#4f46e5,#06b6d4);}
+.rk3{background:linear-gradient(135deg,#10b981,#0ea5e9);}
+.ci-name{font-size:.86rem;font-weight:700;color:var(--text);}
+.ci-sub{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.ci-match{margin-left:auto;font-size:.74rem;font-weight:800;color:var(--g);
+  background:var(--gl);padding:3px 10px;border-radius:99px;flex-shrink:0;}
+
+/* ══════════ ROADMAP ══════════ */
+.timeline{position:relative;padding-left:26px;}
+.timeline::before{content:'';position:absolute;left:9px;top:0;bottom:0;width:2px;
+  background:linear-gradient(to bottom,var(--p),var(--a),transparent);border-radius:99px;}
+.tl-item{position:relative;margin-bottom:20px;}
+.tl-item::before{content:'';position:absolute;left:-21px;top:9px;width:12px;height:12px;
+  border-radius:50%;background:var(--p);border:3px solid #fff;box-shadow:0 0 0 3px rgba(79,70,229,.18);}
+.tl-item.t-done::before{background:var(--g);box-shadow:0 0 0 3px rgba(16,185,129,.18);}
+.tl-item.t-fut::before{background:#e5e7eb;}
+.tl-card{background:#fff;border-radius:13px;padding:13px 15px;border:1.5px solid var(--border);transition:border-color .2s;}
+.tl-card:hover{border-color:var(--p);}
+.tl-card.tl-done{border-color:#bbf7d0;background:#f0fdf4;}
+.tl-tag{font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:3px;}
+.tl-name{font-size:.88rem;font-weight:700;color:var(--text);}
+.tl-desc{font-size:.76rem;color:var(--muted);margin-top:4px;line-height:1.55;}
+.tl-chips{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap;}
+.tl-chip{padding:3px 10px;border-radius:99px;font-size:.68rem;font-weight:700;background:var(--pl);color:var(--p);}
+.tl-chip.done{background:var(--gl);color:#065f46;}
+
+/* ══════════ SETTINGS ══════════ */
+.settings-l{display:flex;flex-direction:column;gap:13px;}
+.s-row{display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:13px;
+  border:1.5px solid var(--border);background:#fafafa;transition:border-color .2s;}
+.s-row:hover{border-color:var(--p);}
+.s-ico{font-size:1.35rem;flex-shrink:0;}
+.s-t{font-size:.86rem;font-weight:700;color:var(--text);}
+.s-s{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.s-act{margin-left:auto;}
+.tog{width:40px;height:21px;border-radius:99px;background:#e5e7eb;position:relative;
+  cursor:pointer;border:none;transition:background .2s;flex-shrink:0;}
+.tog.on{background:var(--p);}
+.tog::after{content:'';position:absolute;width:15px;height:15px;border-radius:50%;
+  background:#fff;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.tog.on::after{transform:translateX(19px);}
+.s-ebtn{background:var(--pl);color:var(--p);border:none;padding:7px 14px;border-radius:8px;
+  font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+.s-ebtn:hover{background:#ddd6fe;}
+
+/* ══════════ BTN ══════════ */
+.btn-pr{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;
+  padding:11px 22px;border-radius:10px;font-size:.83rem;font-weight:700;
+  cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s;
+  display:inline-flex;align-items:center;gap:7px;}
+.btn-pr:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(79,70,229,.35);}
+
+/* ══════════ OVERALL PROG ══════════ */
+.op-bar-wrap{background:#f3f4f6;border-radius:99px;height:10px;overflow:hidden;margin-top:6px;}
+.op-bar{height:10px;background:linear-gradient(90deg,var(--p),var(--a));border-radius:99px;transition:width 1.2s ease;}
+.prog-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.prog-lbl{font-size:.82rem;font-weight:700;color:var(--text);}
+.prog-val{font-size:.82rem;font-weight:800;color:var(--p);}
+
+/* ══════════ AI BANNER ══════════ */
+.ai-banner{
+  background:linear-gradient(135deg,#0f0c29,#1a1645);
+  border-radius:16px;padding:20px 22px;color:#fff;
+  display:flex;align-items:center;gap:16px;margin-top:16px;
+  border:1px solid rgba(79,70,229,.3);position:relative;overflow:hidden;
+}
+.ai-banner::before{content:'';position:absolute;right:-40px;top:-40px;width:150px;height:150px;
+  background:radial-gradient(circle,rgba(79,70,229,.3),transparent 65%);}
+.ai-ico{font-size:2rem;flex-shrink:0;}
+.ai-t{font-family:'Sora',sans-serif;font-size:.9rem;font-weight:800;margin-bottom:3px;}
+.ai-s{font-size:.76rem;color:rgba(255,255,255,.6);line-height:1.5;}
+.ai-go{margin-left:auto;background:linear-gradient(135deg,#4f46e5,#06b6d4);color:#fff;
+  border:none;padding:9px 18px;border-radius:9px;font-size:.78rem;font-weight:800;
+  cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0;transition:all .2s;position:relative;z-index:1;}
+.ai-go:hover{transform:scale(1.05);}
+
+/* ══════════ MOBILE ══════════ */
+.hbg{display:none;position:fixed;top:13px;left:13px;z-index:200;width:40px;height:40px;
+  border-radius:11px;background:var(--p);border:none;cursor:pointer;
+  flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  box-shadow:0 4px 14px rgba(79,70,229,.4);}
+.hbg span{width:17px;height:2px;background:#fff;border-radius:2px;transition:all .3s;}
+.hbg.op span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hbg.op span:nth-child(2){opacity:0;}
+.hbg.op span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .3s;}
+.ov.op{opacity:1;pointer-events:all;}
+
+@media(max-width:900px){
+  :root{--sb:0px;}
+  .sidebar{transform:translateX(-260px);--sb:260px;}
+  .sidebar.op{transform:translateX(0);}
+  .ov{display:block;}
+  .main{margin-left:0;}
+  .hbg{display:flex;}
+  .content{padding:18px 14px;}
+  .topbar{padding:0 14px 0 60px;}
+  .w-emo{display:none;}
+  .grid2,.res-g{grid-template-columns:1fr;}
+  .stats{grid-template-columns:1fr 1fr;}
+  .at-grid{grid-template-columns:1fr 1fr;}
+  .per-g{grid-template-columns:1fr;}
+}
+@media(max-width:560px){
+  .stats{grid-template-columns:1fr 1fr;}
+  .at-grid{grid-template-columns:1fr 1fr;}
+  .w-inner h2{font-size:1.4rem;}
+}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:rgba(79,70,229,.2);border-radius:99px;}
+</style>
+</head>
+<body>
+
+<button class="hbg" id="hbg" onclick="toggleSB()">
+  <span></span><span></span><span></span>
+</button>
+<div class="ov" id="ov" onclick="toggleSB()"></div>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-top">
+    <div class="sb-logo">
+      <div class="sb-logo-mark">🎯</div>
+      <div>
+        <div class="sb-logo-text">CareerPath AI</div>
+        <div class="sb-logo-sub">Student Portal</div>
+      </div>
+    </div>
+    <div class="sb-user">
+      <div class="sb-av" id="sb-av">ST</div>
+      <div>
+        <div class="sb-uname" id="sb-nm">Student</div>
+        <div class="sb-urole" id="sb-class">Class Student</div>
+      </div>
+      <div class="sb-pulse"></div>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="sb-sec-label">Main</div>
+    <button class="sb-btn on" onclick="show('overview',this)">
+      <div class="sbi i0">🏠</div>
+      <div class="sb-btn-txt"><strong>Dashboard</strong><small>Overview & progress</small></div>
+    </button>
+    <button class="sb-btn" onclick="show('assess',this)">
+      <div class="sbi i1">📝</div>
+      <div class="sb-btn-txt"><strong>Assessments</strong><small>Tests & quizzes</small></div>
+      <span class="sb-badge" id="sb-pending-badge">4</span>
+    </button>
+    <button class="sb-btn" onclick="show('results',this)">
+      <div class="sbi i2">📊</div>
+      <div class="sb-btn-txt"><strong>My Results</strong><small>Scores & analysis</small></div>
+    </button>
+    <div class="sb-sec-label">Career</div>
+    <button class="sb-btn" onclick="show('career',this)">
+      <div class="sbi i3">💼</div>
+      <div class="sb-btn-txt"><strong>Career Paths</strong><small>AI recommendations</small></div>
+    </button>
+    <button class="sb-btn" onclick="show('roadmap',this)">
+      <div class="sbi i4">🗺️</div>
+      <div class="sb-btn-txt"><strong>Roadmap</strong><small>Your action plan</small></div>
+    </button>
+
+  </nav>
+
+  <div class="sb-foot">
+    <button class="sb-logout" onclick="doLogout()">🚪 Sign Out</button>
+  </div>
+</aside>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-l">
+      <div class="tb-title" id="tb-t">Dashboard Overview</div>
+      <div class="tb-sub" id="tb-s">Welcome back — here's your progress</div>
+    </div>
+    <div class="tb-r">
+
+      <div class="tb-icon" title="Go to Assessment" onclick="show('assess',null)">🚀</div>
+      <div class="tb-chip">
+        <div class="tb-chip-av" id="tb-av">ST</div>
+        <span class="tb-chip-name" id="tb-nm">Student</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ━━━━━ OVERVIEW ━━━━━ -->
+    <section class="section on" id="s-overview">
+
+      <div class="welcome">
+        <div class="w-inner">
+          <div>
+            <div class="w-tag">👋 Good to see you</div>
+            <h2 id="wb-name">Welcome, Student!</h2>
+            <p>Your AI-powered career journey continues. Complete all assessments to get your personalised career recommendation from Claude AI.</p>
+            <button class="w-cta" onclick="show('assess',null)">Continue Assessments →</button>
+          </div>
+          <div class="w-emo">🚀</div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat st-p">
+          <div class="stat-ico">📝</div>
+          <div class="stat-val" id="s-comp">0</div>
+          <div class="stat-lbl">Tests Completed</div>
+          <div class="stat-trend tr-up" id="s-comp-t">— Complete tests</div>
+        </div>
+        <div class="stat st-g">
+          <div class="stat-ico">🎯</div>
+          <div class="stat-val" id="s-score">—</div>
+          <div class="stat-lbl">Avg Score</div>
+          <div class="stat-trend tr-up" id="s-score-t">From your tests</div>
+        </div>
+        <div class="stat st-w">
+          <div class="stat-ico">⏳</div>
+          <div class="stat-val" id="s-pend">4</div>
+          <div class="stat-lbl">Pending Tests</div>
+          <div class="stat-trend tr-w">Finish to unlock AI</div>
+        </div>
+        <div class="stat st-a">
+          <div class="stat-ico">🤖</div>
+          <div class="stat-val" id="s-ai">—</div>
+          <div class="stat-lbl">Top Career Match</div>
+          <div class="stat-trend tr-b" id="s-ai-t">Complete tests to see</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <!-- Progress tracker -->
+        <div class="card">
+          <div class="ch">
+            <div class="ct"><em>✅</em> Assessment Progress</div>
+            <button class="ca" onclick="show('assess',null)">View All</button>
+          </div>
+          <div class="steps" id="ov-steps">
+            <!-- dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card">
+          <div class="ch">
+            <div class="ct"><em>🕐</em> Recent Activity</div>
+          </div>
+          <div class="acts" id="ov-acts">
+            <div class="no-d"><span>📭</span><p>No activity yet. Start an assessment!</p></div>
+          </div>
+        </div>
+
+        <!-- Skill Profile -->
+        <div class="card">
+          <div class="ch">
+            <div class="ct"><em>⚡</em> Skill Profile</div>
+            <button class="ca" onclick="show('results',null)">Details</button>
+          </div>
+          <div class="skills" id="ov-skills">
+            <div class="no-d"><span>📊</span><p>Complete assessments to see your skill profile.</p></div>
+          </div>
+        </div>
+
+        <!-- Personality Snapshot -->
+        <div class="card">
+          <div class="ch">
+            <div class="ct"><em>🧠</em> Personality Snapshot</div>
+            <button class="ca" onclick="show('results',null)">Full Report</button>
+          </div>
+          <div class="per-g" id="ov-per">
+            <div class="per a"><div class="per-ico">🔍</div><div><div class="per-lbl">RIASEC</div><div class="per-val" id="p-riasec">—</div></div></div>
+            <div class="per b"><div class="per-ico">✨</div><div><div class="per-lbl">Personality</div><div class="per-val" id="p-big5">—</div></div></div>
+            <div class="per c"><div class="per-ico">⚡</div><div><div class="per-lbl">Aptitude</div><div class="per-val" id="p-apt">Pending</div></div></div>
+            <div class="per d"><div class="per-ico">🎓</div><div><div class="per-lbl">Academic</div><div class="per-val" id="p-acad">—</div></div></div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ━━━━━ ASSESSMENTS ━━━━━ -->
+    <section class="section" id="s-assess">
+      <div class="card" style="margin-bottom:18px;">
+        <div class="ch">
+          <div class="ct"><em>📝</em> Assessment Centre</div>
+        </div>
+        <p style="font-size:.85rem;color:var(--muted);line-height:1.65;margin-bottom:18px;">
+          Complete all 4 assessments to unlock your personalised AI-powered career recommendation. Each test builds a unique part of your profile.
+        </p>
+        <div class="prog-info">
+          <span class="prog-lbl">Overall Completion</span>
+          <span class="prog-val" id="at-frac">0 / 4</span>
+        </div>
+        <div class="op-bar-wrap"><div class="op-bar" id="at-bar" style="width:0%"></div></div>
+      </div>
+
+      <div class="at-grid" style="grid-template-columns:repeat(2,1fr);max-width:700px;">
+        <div class="at at1" onclick="goToAssessment('riasec')">
+          <span class="at-ico">🔍</span>
+          <div class="at-name">RIASEC Interest</div>
+          <div class="at-desc">6 Holland career interest categories</div>
+          <span class="at-tag" id="at-riasec">Start →</span>
+        </div>
+        <div class="at at2" onclick="goToAssessment('bigfive')">
+          <span class="at-ico">🧠</span>
+          <div class="at-name">Big Five Personality</div>
+          <div class="at-desc">5 core personality dimensions</div>
+          <span class="at-tag" id="at-big5">Start →</span>
+        </div>
+        <div class="at at3" onclick="goToAssessment('aptitude')">
+          <span class="at-ico">⚡</span>
+          <div class="at-name">Aptitude Test</div>
+          <div class="at-desc">Numerical, verbal &amp; logical reasoning</div>
+          <span class="at-tag" id="at-apt">Start →</span>
+        </div>
+        <div class="at at4" onclick="goToAssessment('academic')">
+          <span class="at-ico">🎓</span>
+          <div class="at-name">Academic Analysis</div>
+          <div class="at-desc">10th or 12th standard marks entry</div>
+          <span class="at-tag" id="at-acad">Start →</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ━━━━━ RESULTS ━━━━━ -->
+    <section class="section" id="s-results">
+      <div style="margin-bottom:18px;">
+        <div class="ct" style="font-size:1.1rem;margin-bottom:5px;"><em>📊</em> My Results & Analysis</div>
+        <p style="font-size:.83rem;color:var(--muted);">Full breakdown of all your assessment scores and insights.</p>
+      </div>
+      <div class="res-g" id="results-grid">
+        <!-- populated by JS -->
+        <div class="rseg rs1">
+          <div class="rsh"><span class="rsh-ico">🔍</span><div class="rsh-t">RIASEC Interest</div><span class="rsh-b rb-p" id="r-riasec-badge">Pending</span></div>
+          <div id="r-riasec-content"><div class="no-d"><span>📭</span><p>Complete the RIASEC test to see results.</p></div></div>
+        </div>
+        <div class="rseg rs2">
+          <div class="rsh"><span class="rsh-ico">🧠</span><div class="rsh-t">Big Five Personality</div><span class="rsh-b rb-p" id="r-big5-badge">Pending</span></div>
+          <div id="r-big5-content"><div class="no-d"><span>📭</span><p>Complete the Big Five test to see results.</p></div></div>
+        </div>
+        <div class="rseg rs3">
+          <div class="rsh"><span class="rsh-ico">⚡</span><div class="rsh-t">Aptitude Skills</div><span class="rsh-b rb-p" id="r-apt-badge">Pending</span></div>
+          <div id="r-apt-content"><div class="no-d"><span>📭</span><p>Complete the Aptitude test to see results.</p></div></div>
+        </div>
+        <div class="rseg rs4">
+          <div class="rsh"><span class="rsh-ico">🎓</span><div class="rsh-t">Academic Marks</div><span class="rsh-b rb-p" id="r-acad-badge">Pending</span></div>
+          <div id="r-acad-content"><div class="no-d"><span>📭</span><p>Enter your academic marks to see analysis.</p></div></div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:18px;">
+        <button class="btn-pr" onclick="show('assess',null)">📝 Take More Tests</button>
+      </div>
+    </section>
+
+    <!-- ━━━━━ CAREER ━━━━━ -->
+    <section class="section" id="s-career">
+      <div class="grid2">
+        <div class="card">
+          <div class="ch">
+            <div class="ct"><em>💼</em> Suggested Career Paths</div>
+          </div>
+          <div class="career-list" id="career-list">
+            <div class="no-d"><span>🔒</span><p>Complete assessments to see AI-suggested career paths.</p></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ch">
+            <div class="ct"><em>🎓</em> Recommended Courses</div>
+          </div>
+          <div id="career-courses">
+            <div class="no-d"><span>🔒</span><p>Complete assessments to see recommended courses.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ━━━━━ ROADMAP ━━━━━ -->
+    <section class="section" id="s-roadmap">
+      <div class="card" style="margin-bottom:18px;">
+        <div class="ch">
+          <div class="ct"><em>🗺️</em> Your Career Roadmap</div>
+        </div>
+        <p style="font-size:.83rem;color:var(--muted);line-height:1.6;">Follow this step-by-step plan to discover and achieve your ideal career path. Each milestone builds on the previous one.</p>
+      </div>
+      <div class="card">
+        <div class="timeline" id="roadmap-tl">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ━━━━━ SETTINGS ━━━━━ -->
+    <section class="section" id="s-settings">
+      <div class="grid2">
+        <div class="card">
+          <div class="ch"><div class="ct"><em>👤</em> Profile</div></div>
+          <div class="settings-l">
+            <div class="s-row">
+              <div class="s-ico">🧑‍🎓</div>
+              <div><div class="s-t" id="set-name">Student</div><div class="s-s">Logged in username</div></div>
+              <div class="s-act"><button class="s-ebtn" onclick="goAssessment()">Edit in Portal</button></div>
+            </div>
+            <div class="s-row">
+              <div class="s-ico">🏫</div>
+              <div><div class="s-t" id="set-class">Not set</div><div class="s-s">Class / Grade level</div></div>
+              <div class="s-act"><span style="font-size:.72rem;color:var(--muted);">Auto-detected</span></div>
+            </div>
+            <div class="s-row">
+              <div class="s-ico">🗺️</div>
+              <div><div class="s-t">India</div><div class="s-s">Region / Country</div></div>
+              <div class="s-act"><span style="font-size:.72rem;color:var(--muted);">Default</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ch"><div class="ct"><em>⚙️</em> Preferences</div></div>
+          <div class="settings-l">
+            <div class="s-row">
+              <div class="s-ico">🔔</div>
+              <div><div class="s-t">Progress Reminders</div><div class="s-s">Notify to complete tests</div></div>
+              <div class="s-act"><button class="tog on" id="tog-notif" onclick="togToggle(this)"></button></div>
+            </div>
+            <div class="s-row">
+              <div class="s-ico">🌙</div>
+              <div><div class="s-t">Dark Mode</div><div class="s-s">Coming soon</div></div>
+              <div class="s-act"><button class="tog" id="tog-dark" onclick="togToggle(this)"></button></div>
+            </div>
+            <div class="s-row">
+              <div class="s-ico">🤖</div>
+              <div><div class="s-t">AI Suggestions</div><div class="s-s">Claude AI recommendations</div></div>
+              <div class="s-act"><button class="tog on" id="tog-ai" onclick="togToggle(this)"></button></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card span2">
+          <div class="ch"><div class="ct"><em>📊</em> Assessment Data</div></div>
+          <div class="settings-l">
+            <div class="s-row">
+              <div class="s-ico">💾</div>
+              <div><div class="s-t">Saved Results</div><div class="s-s">All test data is saved locally in your browser</div></div>
+              <div class="s-act"><button class="s-ebtn" onclick="goAssessment()">View in Portal</button></div>
+            </div>
+            <div class="s-row" style="border-color:rgba(239,68,68,.3);background:#fff5f5;">
+              <div class="s-ico">🗑️</div>
+              <div><div class="s-t" style="color:var(--r);">Clear All Data</div><div class="s-s">Delete all saved test results and start fresh</div></div>
+              <div class="s-act"><button class="s-ebtn" style="background:var(--rl);color:var(--r);" onclick="clearData()">Clear Data</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:8px;">
+        <button class="btn-pr" style="background:linear-gradient(135deg,#ef4444,#dc2626);" onclick="doLogout()">🚪 Sign Out</button>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ═══════ ASSESSMENT MODAL OVERLAY ═══════ -->
+<!-- iframe modal removed — using direct navigation instead -->
+
+<script>
+/* ─── ROUTING ─── */
+const pages = {
+  overview: { sec:'s-overview', title:'Dashboard Overview',   sub:'Welcome back — here\'s your progress' },
+  assess:   { sec:'s-assess',   title:'Assessment Centre',    sub:'Complete all tests to unlock AI career analysis' },
+  results:  { sec:'s-results',  title:'My Results',           sub:'Your scores and insights' },
+  career:   { sec:'s-career',   title:'Career Paths',         sub:'AI-powered career recommendations' },
+  roadmap:  { sec:'s-roadmap',  title:'Career Roadmap',       sub:'Your step-by-step action plan' },
+  settings: { sec:'s-settings', title:'Settings',             sub:'Profile & preferences' },
+};
+
+function show(key, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('on'));
+  const p = pages[key];
+  if (!p) return;
+  document.getElementById(p.sec).classList.add('on');
+  document.getElementById('tb-t').textContent = p.title;
+  document.getElementById('tb-s').textContent = p.sub;
+  if (btn) btn.classList.add('on');
+  else {
+    // find matching button
+    document.querySelectorAll('.sb-btn').forEach(b => {
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+key+"'")) b.classList.add('on');
+    });
+  }
+  if (key === 'results') renderResults();
+  if (key === 'career')  renderCareer();
+  if (key === 'roadmap') renderRoadmap();
+  closeSB();
+  window.scrollTo(0,0);
+}
+
+/* ─── SIDEBAR MOBILE ─── */
+function toggleSB() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('ov');
+  const hb = document.getElementById('hbg');
+  const op = sb.classList.contains('op');
+  sb.classList.toggle('op', !op);
+  ov.classList.toggle('op', !op);
+  hb.classList.toggle('op', !op);
+}
+function closeSB() {
+  document.getElementById('sidebar').classList.remove('op');
+  document.getElementById('ov').classList.remove('op');
+  document.getElementById('hbg').classList.remove('op');
+}
+
+/* ─── LOAD USER DATA ─── */
+function loadUser() {
+  const user = localStorage.getItem('cp_loggedIn_user') || 'Student';
+  const initials = user.slice(0,2).toUpperCase();
+  document.getElementById('sb-av').textContent = initials;
+  document.getElementById('sb-nm').textContent = user;
+  document.getElementById('tb-av').textContent = initials;
+  document.getElementById('tb-nm').textContent = user;
+  document.getElementById('wb-name').textContent = 'Welcome, ' + user + '!';
+  document.getElementById('set-name').textContent = user;
+
+  // Load scores — merge 10th and 12th class scores, prefer non-null values
+  let scores = null;
+  try {
+    const sOld = JSON.parse(localStorage.getItem('cp_scores_' + user)) || {};
+    const s10  = JSON.parse(localStorage.getItem('cp_scores_' + user + '_10th')) || {};
+    const s12  = JSON.parse(localStorage.getItem('cp_scores_' + user + '_12th')) || {};
+    const merged = Object.assign({}, sOld, s10, s12);
+    if (Object.values(merged).some(v => v !== null && v !== undefined)) scores = merged;
+  } catch(e) {}
+  return { user, scores };
+}
+
+/* ─── COMPUTE STATS ─── */
+function computeStats(scores) {
+  const tests = ['riasec','bigfive','aptitude','academic'];
+  let completed = 0;
+  tests.forEach(t => { if (scores && scores[t]) completed++; });
+  const pending = 4 - completed;
+
+  let avgScore = '—';
+  let totPct = 0, cnt = 0;
+  if (scores) {
+    ['riasec','bigfive','aptitude'].forEach(t => {
+      if (scores[t] && scores[t].normalised) {
+        const vals = Object.values(scores[t].normalised);
+        totPct += vals.reduce((a,b)=>a+b,0)/vals.length;
+        cnt++;
+      }
+    });
+  }
+  if (cnt > 0) avgScore = Math.round(totPct/cnt) + '%';
+
+  let topCareer = '—';
+  if (scores && scores.riasec && scores.riasec.topTrait) topCareer = scores.riasec.topTrait;
+
+  return { completed, pending, avgScore, topCareer };
+}
+
+/* ─── RENDER OVERVIEW ─── */
+function renderOverview(scores) {
+  const st = computeStats(scores);
+  document.getElementById('s-comp').textContent = st.completed;
+  document.getElementById('s-pend').textContent = st.pending;
+  document.getElementById('s-score').textContent = st.avgScore;
+  document.getElementById('s-ai').textContent = st.topCareer;
+  document.getElementById('s-comp-t').textContent = st.completed > 0 ? `↑ ${st.completed} done` : '— Start your tests';
+  document.getElementById('s-score-t').textContent = st.avgScore !== '—' ? '↑ Great performance' : 'Complete tests to see';
+  document.getElementById('s-ai-t').textContent = st.topCareer !== '—' ? 'Based on RIASEC test' : 'Complete tests to see';
+  document.getElementById('sb-pending-badge').textContent = st.pending;
+
+  // Personality chips
+  if (scores) {
+    document.getElementById('p-riasec').textContent = scores.riasec ? scores.riasec.topTrait : '—';
+    if (scores.bigfive && scores.bigfive.topTrait) {
+      const top = scores.bigfive.topTrait;
+      const val = scores.bigfive.normalised ? scores.bigfive.normalised[top] : '—';
+      document.getElementById('p-big5').textContent = top + (val ? ' ' + val + '%' : '');
+    }
+    if (scores.aptitude) document.getElementById('p-apt').textContent = scores.aptitude.topTrait || 'Done';
+    if (scores.academic) {
+      const acad = scores.academic;
+      document.getElementById('p-acad').textContent = acad.classLabel ? acad.classLabel : 'Entered ✓';
+    }
+  }
+
+  // Progress steps
+  const stepsData = [
+    { name:'RIASEC Interest Test', sub:'6 career interest categories', key:'riasec' },
+    { name:'Big Five Personality', sub:'5 personality dimensions', key:'bigfive' },
+    { name:'Aptitude Test', sub:'Numerical, verbal, logical', key:'aptitude' },
+    { name:'Academic Marks', sub:'10th / 12th standard marks', key:'academic' },
+  ];
+  const stEl = document.getElementById('ov-steps');
+  stEl.innerHTML = stepsData.map((s, i) => {
+    const done = scores && scores[s.key];
+    const isNext = !done && stepsData.slice(0,i).every(p => scores && scores[p.key]);
+    const cls = done ? 'done' : isNext ? 'active-s' : 'locked';
+    const ico = done ? '✓' : isNext ? '▶' : '🔒';
+    const badge = done ? '<span class="sbadge bd-done">Done ✓</span>' : isNext ? '<span class="sbadge bd-next">Next</span>' : '<span class="sbadge bd-lock">Pending</span>';
+    return `<div class="step ${cls}"><div class="step-ck">${ico}</div><div><div class="step-n">${s.name}</div><div class="step-s">${s.sub}</div></div>${badge}</div>`;
+  }).join('');
+
+  // Skill bars
+  const skillsEl = document.getElementById('ov-skills');
+  if (scores && (scores.riasec || scores.bigfive || scores.aptitude)) {
+    let skillData = [];
+    if (scores.riasec && scores.riasec.normalised) {
+      const top3 = Object.entries(scores.riasec.normalised).sort((a,b)=>b[1]-a[1]).slice(0,3);
+      top3.forEach(([k,v]) => skillData.push({ lbl: k, pct: v }));
+    }
+    if (scores.bigfive && scores.bigfive.normalised) {
+      const top2 = Object.entries(scores.bigfive.normalised).sort((a,b)=>b[1]-a[1]).slice(0,2);
+      top2.forEach(([k,v]) => skillData.push({ lbl: k, pct: v }));
+    }
+    if (skillData.length > 0) {
+      skillsEl.innerHTML = skillData.slice(0,5).map(s =>
+        `<div class="sk-row"><div class="sk-lbl">${s.lbl}</div><div class="sk-track"><div class="sk-fill" data-w="${s.pct}"></div></div><div class="sk-pct">${s.pct}%</div></div>`
+      ).join('');
+      // animate bars
+      setTimeout(() => {
+        document.querySelectorAll('.sk-fill').forEach(b => { b.style.width = b.dataset.w + '%'; });
+      }, 100);
+    }
+  }
+
+  // Activity
+  const actsEl = document.getElementById('ov-acts');
+  const acts = [];
+  if (scores) {
+    if (scores.riasec) acts.push({ ico:'🔍', cls:'ad-p', name:'RIASEC Test Completed', time:'Top: ' + scores.riasec.topTrait, sc: scores.riasec.topTrait });
+    if (scores.bigfive) acts.push({ ico:'🧠', cls:'ad-g', name:'Big Five Personality Done', time:'Top: ' + scores.bigfive.topTrait, sc: (scores.bigfive.normalised ? Object.values(scores.bigfive.normalised)[0] + '%' : '—') });
+    if (scores.aptitude) acts.push({ ico:'⚡', cls:'ad-w', name:'Aptitude Test Completed', time:'Top: ' + scores.aptitude.topTrait, sc: scores.aptitude.topTrait });
+    if (scores.academic) acts.push({ ico:'🎓', cls:'ad-a', name:'Academic Marks Entered', time: scores.academic.classLabel || 'Marks saved', sc:'✓' });
+  }
+  if (acts.length === 0) {
+    actsEl.innerHTML = `<div class="no-d"><span>📭</span><p>No activity yet. Start an assessment!</p></div>`;
+  } else {
+    actsEl.innerHTML = acts.slice(0,4).reverse().map(a =>
+      `<div class="act"><div class="act-d ${a.cls}">${a.ico}</div><div><div class="act-n">${a.name}</div><div class="act-t">${a.time}</div></div><span class="act-sc">${a.sc}</span></div>`
+    ).join('');
+  }
+
+  // Assessment tiles status
+  const tileMap = {
+    riasec: 'at-riasec', bigfive: 'at-big5', aptitude: 'at-apt', academic: 'at-acad'
+  };
+  let doneCount = 0;
+  Object.entries(tileMap).forEach(([k, id]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (scores && scores[k]) { el.textContent = '✓ Completed'; el.className = 'at-tag at-done'; doneCount++; }
+    else { el.textContent = 'Start →'; el.className = 'at-tag at-pend'; }
+  });
+  document.getElementById('at-frac').textContent = doneCount + ' / 4';
+  document.getElementById('at-bar').style.width = Math.round(doneCount/4*100) + '%';
+
+  // Class info
+  if (scores && scores.academic && scores.academic.classLabel) {
+    document.getElementById('sb-class').textContent = scores.academic.classLabel;
+    document.getElementById('set-class').textContent = scores.academic.classLabel;
+  }
+}
+
+/* ─── RENDER RESULTS ─── */
+function renderResults() {
+  const { scores } = loadUser();
+  const sections = [
+    { key: 'riasec', badgeId: 'r-riasec-badge', contentId: 'r-riasec-content',
+      colors: { fill:'linear-gradient(90deg,#f59e0b,#ef4444)', val:'#f59e0b' } },
+    { key: 'bigfive', badgeId: 'r-big5-badge', contentId: 'r-big5-content',
+      colors: { fill:'linear-gradient(90deg,#8b5cf6,#4f46e5)', val:'#8b5cf6' } },
+    { key: 'aptitude', badgeId: 'r-apt-badge', contentId: 'r-apt-content',
+      colors: { fill:'linear-gradient(90deg,#10b981,#06b6d4)', val:'#10b981' } },
+    { key: 'academic', badgeId: 'r-acad-badge', contentId: 'r-acad-content',
+      colors: { fill:'linear-gradient(90deg,#3b82f6,#4f46e5)', val:'#3b82f6' } },
+  ];
+
+  sections.forEach(s => {
+    const badge = document.getElementById(s.badgeId);
+    const content = document.getElementById(s.contentId);
+    if (!scores || !scores[s.key]) {
+      badge.className = 'rsh-b rb-p'; badge.textContent = 'Pending';
+      content.innerHTML = `<div class="no-d"><span>📭</span><p>Complete this assessment to see results.</p></div>`;
+      return;
+    }
+    badge.className = 'rsh-b rb-d'; badge.textContent = 'Done ✓';
+    const data = scores[s.key];
+
+    if (s.key === 'academic') {
+      const ac = data;
+      const grade = ac.grade || (ac.avg >= 90 ? 'Outstanding 🌟' : ac.avg >= 75 ? 'Excellent 🎉' : ac.avg >= 60 ? 'Good 👍' : ac.avg >= 40 ? 'Average 📝' : 'Needs Improvement');
+      let subjectBars = '';
+      const subObj = (ac.subjects && typeof ac.subjects === 'object' && !Array.isArray(ac.subjects)) ? ac.subjects : {};
+      // Only keep string keys that are NOT pure numbers (skip "0","1","2"... index keys)
+      const subEntries = Object.entries(subObj).filter(([k]) => isNaN(Number(k)));
+      if (subEntries.length > 0) {
+        subjectBars = `<div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">` +
+          subEntries.map(([subName, score]) => {
+            const pct = Math.min(Math.max(parseInt(score)||0, 0), 100);
+            const col = pct >= 75 ? 'linear-gradient(90deg,#10b981,#06b6d4)' : pct >= 50 ? 'linear-gradient(90deg,#f59e0b,#10b981)' : 'linear-gradient(90deg,#ef4444,#f59e0b)';
+            const scoreColor = pct >= 75 ? '#10b981' : pct >= 50 ? '#f59e0b' : '#ef4444';
+            return `<div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:145px;flex-shrink:0;font-size:.8rem;font-weight:600;color:#374151;">${subName}</div>
+              <div style="flex:1;background:#f3f4f6;border-radius:99px;height:8px;overflow:hidden;">
+                <div style="height:8px;border-radius:99px;background:${col};width:${pct}%;"></div>
+              </div>
+              <div style="width:44px;text-align:right;font-size:.8rem;font-weight:800;color:${scoreColor};">${pct}/100</div>
+            </div>`;
+          }).join('') + `</div>`;
+      }
+      content.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+          <div style="background:linear-gradient(135deg,var(--p),var(--a));color:#fff;border-radius:11px;padding:9px 16px;font-size:.85rem;font-weight:800;">
+            📊 Avg: ${ac.avg || '—'}%
+          </div>
+          <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:11px;padding:9px 14px;font-size:.82rem;font-weight:700;color:#065f46;">
+            ${grade}
+          </div>
+          ${ac.classLabel ? `<div style="background:var(--pl);border:1.5px solid #c4b5fd;border-radius:11px;padding:9px 14px;font-size:.76rem;font-weight:700;color:var(--p);">🎓 ${ac.classLabel}</div>` : ''}
+        </div>
+        ${subjectBars || '<div class="no-d" style="padding:8px 0;"><span style="font-size:1.2rem;">📝</span><p>No subject marks entered.</p></div>'}`;
+
+    } else if (data.normalised) {
+      const sorted = Object.entries(data.normalised).sort((a,b) => b[1]-a[1]);
+      content.innerHTML = `
+        <div style="font-size:.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:10px;">Top Trait: <span style="color:var(--text);">${data.topTrait || '—'}</span></div>
+        <div class="mini-bars">
+          ${sorted.map(([k,v]) => `
+            <div class="mb-row">
+              <div class="mb-lbl">${k}</div>
+              <div class="mb-track"><div class="mb-fill" style="width:${v}%;background:${s.colors.fill};"></div></div>
+              <div class="mb-val" style="color:${s.colors.val};">${v}%</div>
+            </div>`).join('')}
+        </div>`;
+    }
+  });
+}
+
+/* ─── COURSE SUGGESTION DATA ─── */
+const COURSE_DB = {
+  Investigative: [
+    { name:'B.Tech / B.E (CSE / AI & ML)', univ:'IIT, NIT, BITS, Anna University', ico:'💻', level:'12th', stream:'Science', duration:'4 yrs', match:97 },
+    { name:'B.Sc Data Science', univ:'Chennai Mathematical Institute, IIIT', ico:'📊', level:'12th', stream:'Science', duration:'3 yrs', match:93 },
+    { name:'MBBS / BDS', univ:'AIIMS, JIPMER, SRMC', ico:'🩺', level:'12th', stream:'Science (Bio)', duration:'5.5 yrs', match:88 },
+    { name:'B.Sc Research (Physics / Chem)', univ:'IISc, IISER Institutes', ico:'🔬', level:'12th', stream:'Science', duration:'5 yrs', match:85 },
+    { name:'M.Sc Artificial Intelligence', univ:'IIT Madras, BITS Pilani', ico:'🤖', level:'ug', stream:'Science', duration:'2 yrs', match:92 },
+    { name:'Python & Data Analytics Cert.', univ:'NPTEL / Coursera / edX', ico:'📜', level:'cert', stream:'Any', duration:'3–6 months', match:90 },
+  ],
+  Realistic: [
+    { name:'B.E Mechanical Engineering', univ:'Anna University, NIT Trichy', ico:'⚙️', level:'12th', stream:'Science', duration:'4 yrs', match:95 },
+    { name:'B.E Civil Engineering', univ:'IIT Madras, NIT', ico:'🏗️', level:'12th', stream:'Science', duration:'4 yrs', match:91 },
+    { name:'Diploma in Engineering (Poly)', univ:'Govt. Polytechnic Colleges', ico:'🛠️', level:'10th', stream:'Any', duration:'3 yrs', match:88 },
+    { name:'B.Tech Electrical Engineering', univ:'Anna University, BITS', ico:'⚡', level:'12th', stream:'Science', duration:'4 yrs', match:86 },
+    { name:'ITI Electrician / Fitter Trades', univ:'Govt. ITI Colleges', ico:'🔧', level:'10th', stream:'Any', duration:'2 yrs', match:80 },
+    { name:'AutoCAD & 3D Modelling Cert.', univ:'CADD Centre / Udemy', ico:'📐', level:'cert', stream:'Any', duration:'6 months', match:82 },
+  ],
+  Artistic: [
+    { name:'B.Des (NID / NIFT)', univ:'NID Ahmedabad, NIFT Delhi', ico:'🎨', level:'12th', stream:'Any', duration:'4 yrs', match:97 },
+    { name:'B.Arch', univ:'SPA Delhi, Manipal, NIT', ico:'🏛️', level:'12th', stream:'Science', duration:'5 yrs', match:93 },
+    { name:'B.Sc Animation & VFX', univ:'Arena, Maac, Symbiosis', ico:'🎬', level:'12th', stream:'Any', duration:'3 yrs', match:89 },
+    { name:'BA Fine Arts / Music', univ:'Govt. College of Fine Arts', ico:'🖌️', level:'12th', stream:'Arts', duration:'3 yrs', match:85 },
+    { name:'Certificate in UX Design', univ:'Google / NN Group / Coursera', ico:'🖥️', level:'cert', stream:'Any', duration:'6 months', match:88 },
+    { name:'B.Sc Fashion Design', univ:'NIFT, Pearl Academy', ico:'👗', level:'12th', stream:'Any', duration:'3 yrs', match:82 },
+  ],
+  Social: [
+    { name:'B.Ed (Bachelor of Education)', univ:'Tamil Nadu Teachers University', ico:'👩‍🏫', level:'ug', stream:'Any', duration:'2 yrs', match:96 },
+    { name:'B.Sc Psychology / M.Sc Psych', univ:'NIMHANS, Christ University', ico:'🧠', level:'12th', stream:'Arts/Science', duration:'3–5 yrs', match:93 },
+    { name:'BA Social Work / MSW', univ:'TISS, Madras School of Social Work', ico:'🤝', level:'12th', stream:'Arts', duration:'3–2 yrs', match:89 },
+    { name:'B.Sc Nursing', univ:'CMC Vellore, AIIMS', ico:'💊', level:'12th', stream:'Science (Bio)', duration:'4 yrs', match:88 },
+    { name:'MBA Human Resources', univ:'IIM, XLRI, Symbiosis', ico:'👥', level:'pg', stream:'Any', duration:'2 yrs', match:84 },
+    { name:'Counselling & Life Coaching Cert.', univ:'ICF / NCFE Online', ico:'💬', level:'cert', stream:'Any', duration:'6 months', match:80 },
+  ],
+  Enterprising: [
+    { name:'BBA (Bachelor of Business Admin)', univ:'Christ, Symbiosis, Loyola', ico:'💼', level:'12th', stream:'Commerce/Any', duration:'3 yrs', match:96 },
+    { name:'MBA (IIM / Top B-Schools)', univ:'IIM A/B/C, IIFT, NMIMS', ico:'🏢', level:'pg', stream:'Any', duration:'2 yrs', match:94 },
+    { name:'Integrated LLB (BA/BBA+LLB)', univ:'NLSIU, NALSAR, Symbiosis', ico:'⚖️', level:'12th', stream:'Any', duration:'5 yrs', match:90 },
+    { name:'B.Com (Honours)', univ:'Loyola, Stella Maris, SRCC', ico:'📈', level:'12th', stream:'Commerce', duration:'3 yrs', match:87 },
+    { name:'Digital Marketing Certification', univ:'Google / HubSpot / Meta Blueprint', ico:'📱', level:'cert', stream:'Any', duration:'3 months', match:85 },
+    { name:'CA Foundation → Intermediate', univ:'ICAI (Institute of Chartered Accountants)', ico:'🏦', level:'12th', stream:'Commerce', duration:'3+ yrs', match:83 },
+  ],
+  Conventional: [
+    { name:'B.Com / B.Com (CA)', univ:'Loyola, Stella Maris, MOP', ico:'📒', level:'12th', stream:'Commerce', duration:'3 yrs', match:95 },
+    { name:'CA (Chartered Accountancy)', univ:'ICAI — All India', ico:'🧾', level:'12th', stream:'Commerce', duration:'4–5 yrs', match:93 },
+    { name:'B.Sc Statistics / Mathematics', univ:'Chennai Mathematical Institute', ico:'📐', level:'12th', stream:'Science', duration:'3 yrs', match:88 },
+    { name:'BBA Finance / Banking', univ:'Christ, Symbiosis, IFMR', ico:'💳', level:'12th', stream:'Commerce', duration:'3 yrs', match:85 },
+    { name:'Tally ERP & GST Certification', univ:'Tally Academy / NIIT', ico:'🖩', level:'cert', stream:'Commerce', duration:'3 months', match:80 },
+    { name:'M.Sc Data Science / Analytics', univ:'IIT Madras, IIM Calcutta', ico:'📊', level:'pg', stream:'Any', duration:'2 yrs', match:86 },
+  ],
+};
+
+let _allCourses = [];
+let _activeFilter = 'all';
+
+function renderCourseSuggestions() {
+  const { scores } = loadUser();
+  const grid = document.getElementById('cs-grid');
+  const eduMsg = document.getElementById('edu-ai-msg');
+  const eduPills = document.getElementById('edu-pills');
+
+  if (!scores || !scores.riasec) {
+    grid.innerHTML = `<div class="cs-empty"><span>🔒</span><p>Complete at least the RIASEC test to unlock course suggestions.</p></div>`;
+    return;
+  }
+
+  const top = scores.riasec.topTrait;
+  _allCourses = COURSE_DB[top] || COURSE_DB['Investigative'];
+
+  // Sort by match desc
+  _allCourses.sort((a,b) => b.match - a.match);
+
+  filterCourses(_activeFilter, null);
+
+  // AI message
+  const topCourse = _allCourses[0];
+  const hasAptitude = scores.aptitude ? `Your aptitude top trait (${scores.aptitude.topTrait}) strengthens this path. ` : '';
+  const hasAcademic = scores.academic ? `Your academic average of ${scores.academic.avg || '—'}% aligns well. ` : '';
+  eduMsg.textContent = `Based on your ${top} interest profile, Eduthuru AI recommends ${topCourse.name} as your top course choice. ${hasAptitude}${hasAcademic}Explore the options above and filter by your current standard.`;
+
+  // Pills
+  const pills = [
+    `🎯 Top: ${top}`,
+    `📚 ${_allCourses.length} courses matched`,
+    scores.bigfive ? `✨ ${scores.bigfive.topTrait} personality` : null,
+    scores.aptitude ? `⚡ ${scores.aptitude.topTrait} aptitude` : null,
+    scores.academic ? `🎓 Academic: ${scores.academic.avg || '—'}%` : null,
+  ].filter(Boolean);
+  eduPills.innerHTML = pills.map(p => `<span class="edu-pill">${p}</span>`).join('');
+}
+
+function filterCourses(filter, btn) {
+  _activeFilter = filter;
+  // Update tab active state
+  if (btn) {
+    document.querySelectorAll('.cs-tab').forEach(t => t.classList.remove('on'));
+    btn.classList.add('on');
+  }
+
+  const grid = document.getElementById('cs-grid');
+  let filtered = _allCourses;
+  if (filter !== 'all') filtered = _allCourses.filter(c => c.level === filter);
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="cs-empty"><span>📭</span><p>No courses found for this filter. Try "All Courses".</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((c, i) => {
+    const tier = i === 0 ? 'tier1' : i < 3 ? 'tier2' : 'tier3';
+    return `
+      <div class="cs-card ${tier}">
+        <span class="cs-match">${c.match}% match</span>
+        <span class="cs-ico">${c.ico}</span>
+        <div class="cs-name">${c.name}</div>
+        <div class="cs-univ">🏫 ${c.univ}</div>
+        <div class="cs-tags">
+          <span class="cs-tg tg-stream">${c.stream}</span>
+          <span class="cs-tg tg-dur">⏱ ${c.duration}</span>
+          <span class="cs-tg tg-match">${c.level === '10th' ? 'After 10th' : c.level === '12th' ? 'After 12th' : c.level === 'ug' ? 'UG' : c.level === 'pg' ? 'PG' : 'Certificate'}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ─── RENDER CAREER ─── */
+function renderCareer() {
+  const { scores } = loadUser();
+  const careerList = document.getElementById('career-list');
+  const courseDiv = document.getElementById('career-courses');
+
+  const riasecCareers = {
+    Investigative:['Research Scientist','Data Scientist','Doctor','Software Engineer','Engineer'],
+    Realistic:['Mechanical Engineer','Civil Engineer','Electrician','Carpenter','Pilot'],
+    Artistic:['Graphic Designer','Architect','Musician','Writer','Film Director'],
+    Social:['Teacher','Counsellor','Social Worker','HR Manager','Nurse'],
+    Enterprising:['Entrepreneur','Marketing Manager','Lawyer','Business Analyst','CEO'],
+    Conventional:['Chartered Accountant','Data Analyst','Administrative Manager','Banker','Tax Consultant'],
+  };
+
+  if (!scores || !scores.riasec) {
+    careerList.innerHTML = `<div class="no-d"><span>🔒</span><p>Complete the RIASEC test to see career suggestions.</p></div>`;
+    courseDiv.innerHTML = `<div class="no-d"><span>🔒</span><p>Complete assessments to see course suggestions.</p></div>`;
+    document.getElementById('career-ai-msg').textContent = 'Complete all assessments in the portal to unlock your personalised Claude AI career recommendation.';
+    return;
+  }
+
+  const top = scores.riasec.topTrait;
+  const careers = riasecCareers[top] || ['Software Engineer','Doctor','Lawyer','Architect','Teacher'];
+  const rankCls = ['rk1','rk2','rk3'];
+  careerList.innerHTML = careers.map((c, i) =>
+    `<div class="career-item">
+      <div class="ci-rank ${rankCls[i]||'rk2'}">#${i+1}</div>
+      <div><div class="ci-name">${c}</div><div class="ci-sub">Based on your ${top} interest profile</div></div>
+      <span class="ci-match">${85-i*5}% match</span>
+    </div>`
+  ).join('');
+
+  const courseMap = {
+    Investigative:['B.Tech / B.E','B.Sc Data Science','MBBS / BDS','B.Sc Research','M.Sc Physics'],
+    Realistic:['B.E Mechanical','B.E Civil','Diploma Engineering','B.Tech EEE','ITI Courses'],
+    Artistic:['B.Des (NID/NIFT)','B.Arch','BA Fine Arts','B.Sc Animation','B.Sc Fashion Design'],
+    Social:['B.Ed','B.Sc Psychology','BA Social Work','B.Sc Nursing','MBA HR'],
+    Enterprising:['BBA','MBA','BA Economics','B.Com','Integrated LLB'],
+    Conventional:['B.Com','CA Foundation','B.Sc Statistics','BBA Finance','BA Economics'],
+  };
+  const courses = courseMap[top] || ['B.Tech','MBBS','BA Economics','B.Com','BBA'];
+  const chipCls = ['gold','silver','bronze','plain','plain'];
+  const medals = ['🥇','🥈','🥉','',''];
+  courseDiv.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:9px;">${courses.map((c,i) =>
+    `<span style="padding:8px 16px;border-radius:99px;font-size:.8rem;font-weight:700;display:inline-flex;align-items:center;gap:5px;
+      ${i===0?'background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;border:2px solid #f59e0b;':
+        i===1?'background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e40af;border:2px solid #3b82f6;':
+        i===2?'background:linear-gradient(135deg,#fdf4ee,#fde8d8);color:#9a3412;border:2px solid #fb923c;':
+        'background:#f3f4f6;color:#374151;border:2px solid #e5e7eb;'}">
+      ${medals[i]} ${c}</span>`
+  ).join('')}</div>`;
+
+  const msg = `Based on your ${top} interest profile (RIASEC) and ${scores.bigfive ? scores.bigfive.topTrait + ' personality' : 'personality traits'}, Claude AI suggests focusing on ${careers[0]} or ${careers[1]} as top career options. Open the full AI tool for a detailed personalised analysis.`;
+  document.getElementById('career-ai-msg').textContent = msg;
+  renderCourseSuggestions();
+}
+
+/* ─── RENDER ROADMAP ─── */
+function renderRoadmap() {
+  const { scores } = loadUser();
+  const st = computeStats(scores);
+  const tl = document.getElementById('roadmap-tl');
+
+  const steps = [
+    { tag:'Step 1 — Discover', name:'Complete RIASEC Interest Test', desc:'Identify your 6 Holland Code career interest categories. This forms the foundation of your career profile.', done: !!(scores && scores.riasec), chip: scores && scores.riasec ? scores.riasec.topTrait : 'To Do' },
+    { tag:'Step 2 — Know Yourself', name:'Complete Big Five Personality Test', desc:'Understand your personality traits — Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism.', done: !!(scores && scores.bigfive), chip: scores && scores.bigfive ? scores.bigfive.topTrait : 'To Do' },
+    { tag:'Step 3 — Test Skills', name:'Complete Aptitude Assessment', desc:'Measure your Numerical, Verbal, Logical, and Spatial reasoning abilities.', done: !!(scores && scores.aptitude), chip: scores && scores.aptitude ? scores.aptitude.topTrait : 'To Do' },
+    { tag:'Step 4 — Academics', name:'Enter Academic Marks', desc:'Input your 10th or 12th standard marks for combined academic + personality career analysis.', done: !!(scores && scores.academic), chip: scores && scores.academic ? (scores.academic.classLabel || 'Entered') : 'To Do' },
+    { tag:'Step 5 — Plan', name:'Explore Course Suggestions', desc:'Get AI-powered course suggestions for 10th / 12th / UG / PG based on your complete profile.', done: st.completed >= 2, chip: st.completed >= 2 ? 'Available' : 'Pending' },
+  ];
+
+  tl.innerHTML = steps.map(s => `
+    <div class="tl-item ${s.done ? 't-done' : ''}">
+      <div class="tl-card ${s.done ? 'tl-done' : ''}">
+        <div class="tl-tag">${s.tag}</div>
+        <div class="tl-name">${s.name}</div>
+        <div class="tl-desc">${s.desc}</div>
+        <div class="tl-chips">
+          <span class="tl-chip ${s.done ? 'done' : ''}">${s.done ? '✓ Done' : '○ Pending'}</span>
+          <span class="tl-chip">${s.chip}</span>
+        </div>
+      </div>
+    </div>`
+  ).join('');
+}
+
+/* ─── TOGGLE ─── */
+function togToggle(el) { el.classList.toggle('on'); }
+
+/* ─── CLEAR DATA ─── */
+function clearData() {
+  if (!confirm('Are you sure? This will delete ALL your test results. You will need to redo all assessments.')) return;
+  const user = localStorage.getItem('cp_loggedIn_user');
+  if (user) localStorage.removeItem('cp_scores_' + user);
+  alert('All assessment data cleared!');
+  location.reload();
+}
+
+/* ─── LOGOUT ─── */
+function doLogout() {
+  const u = localStorage.getItem('cp_loggedIn_user');
+  if (u) localStorage.removeItem('cp_scores_' + u);
+  localStorage.removeItem('cp_loggedIn_user');
+  location.reload();
+}
+
+/* ─── GO TO ASSESSMENT ─── */
+function goToAssessment(testKey) {
+  localStorage.setItem('cp_return_to', 'dashboard');
+  const key = testKey === 'academic' ? 'course' : testKey;
+  if (key) localStorage.setItem('cp_direct_test', key);
+  window.location.href = '/assessment/';
+}
+
+function goToTest(testKey) {
+  localStorage.setItem('cp_return_to', 'dashboard');
+  if (testKey) localStorage.setItem('cp_direct_test', testKey);
+  window.location.href = '/assessment/';
+}
+
+function goAssessment() {
+  localStorage.setItem('cp_return_to', 'dashboard');
+  window.location.href = '/assessment/';
+}
+
+function goAssessment() {
+  goToTest('');
+}
+
+/* ─── INIT ─── */
+window.onload = function() {
+  const user = localStorage.getItem('cp_loggedIn_user');
+
+  // If no user, load demo data so dashboard still displays
+  if (!user) {
+    // Set demo user for preview
+    localStorage.setItem('cp_loggedIn_user', 'Demo Student');
+    const demoScores = {
+      riasec: {
+        topTrait: 'Investigative',
+        normalised: { Investigative:85, Realistic:70, Artistic:60, Social:55, Enterprising:48, Conventional:38 }
+      },
+      bigfive: {
+        topTrait: 'Openness',
+        normalised: { Openness:82, Conscientiousness:75, Extraversion:52, Agreeableness:68, Neuroticism:35 }
+      }
+    };
+    localStorage.setItem('cp_scores_Demo Student', JSON.stringify(demoScores));
+  }
+
+  const { scores } = loadUser();
+  renderOverview(scores);
+  renderRoadmap();
+};
+</script>
+<!-- ═══════ TEST MODAL ═══════ -->
+<div id="test-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(15,10,40,.7);backdrop-filter:blur(6px);z-index:200;overflow-y:auto;padding:24px 16px;">
+  <div id="test-modal-box" style="max-width:680px;margin:0 auto;background:#fff;border-radius:22px;box-shadow:0 24px 80px rgba(79,70,229,.25);overflow:hidden;">
+    <!-- Header -->
+    <div id="tm-header" style="background:linear-gradient(135deg,#4f46e5,#06b6d4);padding:22px 26px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div id="tm-title" style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;"></div>
+        <div id="tm-sub" style="font-size:.75rem;color:rgba(255,255,255,.7);margin-top:3px;"></div>
+      </div>
+      <button onclick="closeTestModal()" style="background:rgba(255,255,255,.15);border:none;width:36px;height:36px;border-radius:50%;color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <!-- Progress bar -->
+    <div style="height:5px;background:#e5e7eb;"><div id="tm-prog" style="height:5px;background:linear-gradient(90deg,#4f46e5,#06b6d4);width:0%;transition:width .4s;"></div></div>
+    <!-- Body -->
+    <div id="tm-body" style="padding:26px;min-height:320px;"></div>
+  </div>
+</div>
+
+<style>
+.tm-q{font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:#1e1b4b;margin-bottom:18px;line-height:1.5;}
+.tm-opts{display:flex;flex-direction:column;gap:10px;}
+.tm-opt{padding:12px 16px;border-radius:12px;border:2px solid #e5e7eb;background:#f9fafb;font-size:.88rem;font-weight:600;color:#374151;cursor:pointer;text-align:left;transition:all .18s;font-family:'Plus Jakarta Sans',sans-serif;}
+.tm-opt:hover{border-color:#4f46e5;background:#ede9fe;color:#4f46e5;}
+.tm-opt.sel{border-color:#4f46e5;background:#4f46e5;color:#fff;}
+.tm-nav{display:flex;justify-content:space-between;align-items:center;margin-top:22px;padding-top:18px;border-top:1px solid #f3f4f6;}
+.tm-btn{padding:10px 24px;border-radius:10px;font-size:.85rem;font-weight:800;cursor:pointer;border:none;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s;}
+.tm-btn-p{background:#f3f4f6;color:#374151;}
+.tm-btn-p:hover{background:#e5e7eb;}
+.tm-btn-n{background:linear-gradient(135deg,#4f46e5,#06b6d4);color:#fff;box-shadow:0 4px 14px rgba(79,70,229,.3);}
+.tm-btn-n:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(79,70,229,.4);}
+.tm-btn-n:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.tm-qnum{font-size:.75rem;font-weight:700;color:#6b7280;}
+.tm-result{text-align:center;padding:10px 0;}
+.tm-result-ico{font-size:3.5rem;margin-bottom:12px;}
+.tm-result-title{font-family:'Sora',sans-serif;font-size:1.3rem;font-weight:800;color:#1e1b4b;margin-bottom:8px;}
+.tm-result-sub{font-size:.88rem;color:#6b7280;line-height:1.6;margin-bottom:20px;}
+.tm-result-chip{display:inline-block;padding:7px 20px;border-radius:99px;background:linear-gradient(135deg,#4f46e5,#06b6d4);color:#fff;font-weight:800;font-size:.9rem;margin-bottom:18px;}
+.tm-bars{margin:16px 0;text-align:left;}
+.tm-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.tm-bar-lbl{width:130px;font-size:.78rem;font-weight:600;color:#374151;flex-shrink:0;}
+.tm-bar-track{flex:1;background:#f3f4f6;border-radius:99px;height:8px;overflow:hidden;}
+.tm-bar-fill{height:8px;border-radius:99px;background:linear-gradient(90deg,#4f46e5,#06b6d4);}
+.tm-bar-val{width:32px;text-align:right;font-size:.75rem;font-weight:800;color:#4f46e5;}
+.acad-form{display:flex;flex-direction:column;gap:14px;}
+.acad-row{display:flex;align-items:center;gap:12px;}
+.acad-lbl{width:150px;font-size:.85rem;font-weight:600;color:#374151;flex-shrink:0;}
+.acad-inp{flex:1;padding:9px 13px;border:2px solid #e5e7eb;border-radius:10px;font-size:.88rem;font-family:'Plus Jakarta Sans',sans-serif;transition:border .18s;outline:none;}
+.acad-inp:focus{border-color:#4f46e5;}
+.acad-select{flex:1;padding:9px 13px;border:2px solid #e5e7eb;border-radius:10px;font-size:.88rem;font-family:'Plus Jakarta Sans',sans-serif;outline:none;background:#fff;cursor:pointer;}
+.acad-select:focus{border-color:#4f46e5;}
+</style>
+
+<script>
+/* ══════════ TEST DATA ══════════ */
+const TEST_DATA = {
+  riasec: {
+    title: '🔍 RIASEC Interest Test',
+    sub: '24 questions · ~8 minutes',
+    questions: [
+      { q:'I enjoy building or fixing things with my hands.', trait:'Realistic' },
+      { q:'I like working outdoors with tools or machines.', trait:'Realistic' },
+      { q:'I prefer physical activities over desk work.', trait:'Realistic' },
+      { q:'I enjoy assembling or repairing equipment.', trait:'Realistic' },
+      { q:'I like doing science experiments and research.', trait:'Investigative' },
+      { q:'I enjoy analysing data and solving complex problems.', trait:'Investigative' },
+      { q:'I like reading scientific journals and research papers.', trait:'Investigative' },
+      { q:'I prefer thinking through problems methodically.', trait:'Investigative' },
+      { q:'I enjoy drawing, painting, or creating music.', trait:'Artistic' },
+      { q:'I like writing stories, poems, or creative content.', trait:'Artistic' },
+      { q:'I prefer tasks that let me express my creativity.', trait:'Artistic' },
+      { q:'I enjoy designing visual or performing arts work.', trait:'Artistic' },
+      { q:'I enjoy teaching or helping others learn.', trait:'Social' },
+      { q:'I like listening to people and offering support.', trait:'Social' },
+      { q:'I prefer teamwork and collaborative environments.', trait:'Social' },
+      { q:'I enjoy volunteering or community service.', trait:'Social' },
+      { q:'I like leading groups and making decisions.', trait:'Enterprising' },
+      { q:'I enjoy persuading others or selling ideas.', trait:'Enterprising' },
+      { q:'I like starting new projects or businesses.', trait:'Enterprising' },
+      { q:'I prefer competitive, goal-oriented work environments.', trait:'Enterprising' },
+      { q:'I enjoy organising files, data, or records.', trait:'Conventional' },
+      { q:'I prefer following clear procedures and instructions.', trait:'Conventional' },
+      { q:'I like working with numbers, spreadsheets, or accounts.', trait:'Conventional' },
+      { q:'I enjoy completing tasks accurately and thoroughly.', trait:'Conventional' },
+    ],
+    options: ['Strongly Disagree','Disagree','Neutral','Agree','Strongly Agree'],
+    scores: [1,2,3,4,5],
+    scoreFunc: (answers, questions) => {
+      const traits = { Realistic:0, Investigative:0, Artistic:0, Social:0, Enterprising:0, Conventional:0 };
+      const counts = { Realistic:0, Investigative:0, Artistic:0, Social:0, Enterprising:0, Conventional:0 };
+      questions.forEach((q, i) => { if (answers[i] !== undefined) { traits[q.trait] += answers[i]; counts[q.trait]++; } });
+      const normalised = {};
+      Object.keys(traits).forEach(t => { normalised[t] = counts[t] ? Math.round((traits[t]/(counts[t]*5))*100) : 0; });
+      const topTrait = Object.entries(normalised).sort((a,b)=>b[1]-a[1])[0][0];
+      return { topTrait, normalised };
+    }
+  },
+  bigfive: {
+    title: '🧠 Big Five Personality Test',
+    sub: '20 questions · ~6 minutes',
+    questions: [
+      { q:'I enjoy trying new and different things.', trait:'Openness' },
+      { q:'I am imaginative and full of ideas.', trait:'Openness' },
+      { q:'I appreciate art, beauty, and creative expression.', trait:'Openness' },
+      { q:'I like to think about abstract concepts.', trait:'Openness' },
+      { q:'I am always prepared and organised.', trait:'Conscientiousness' },
+      { q:'I pay attention to detail in everything I do.', trait:'Conscientiousness' },
+      { q:'I follow a schedule and stick to plans.', trait:'Conscientiousness' },
+      { q:'I work hard and always finish what I start.', trait:'Conscientiousness' },
+      { q:'I enjoy being around people and socialising.', trait:'Extraversion' },
+      { q:'I talk a lot and feel energised in groups.', trait:'Extraversion' },
+      { q:'I am assertive and like to take charge.', trait:'Extraversion' },
+      { q:'I feel comfortable being the centre of attention.', trait:'Extraversion' },
+      { q:'I care about others\' feelings and wellbeing.', trait:'Agreeableness' },
+      { q:'I am kind and like to help people.', trait:'Agreeableness' },
+      { q:'I trust people and believe in their good intentions.', trait:'Agreeableness' },
+      { q:'I avoid conflict and prefer harmony.', trait:'Agreeableness' },
+      { q:'I often feel stressed or anxious.', trait:'Neuroticism' },
+      { q:'I get upset easily when things go wrong.', trait:'Neuroticism' },
+      { q:'I worry a lot about many things.', trait:'Neuroticism' },
+      { q:'My mood changes frequently.', trait:'Neuroticism' },
+    ],
+    options: ['Strongly Disagree','Disagree','Neutral','Agree','Strongly Agree'],
+    scores: [1,2,3,4,5],
+    scoreFunc: (answers, questions) => {
+      const traits = { Openness:0, Conscientiousness:0, Extraversion:0, Agreeableness:0, Neuroticism:0 };
+      const counts = { Openness:0, Conscientiousness:0, Extraversion:0, Agreeableness:0, Neuroticism:0 };
+      questions.forEach((q, i) => { if (answers[i] !== undefined) { traits[q.trait] += answers[i]; counts[q.trait]++; } });
+      const normalised = {};
+      Object.keys(traits).forEach(t => { normalised[t] = counts[t] ? Math.round((traits[t]/(counts[t]*5))*100) : 0; });
+      const topTrait = Object.entries(normalised).sort((a,b)=>b[1]-a[1])[0][0];
+      return { topTrait, normalised };
+    }
+  },
+  aptitude: {
+    title: '⚡ Aptitude Test',
+    sub: '20 questions · ~12 minutes',
+    questions: [
+      { q:'If a train travels 120 km in 2 hours, what is its speed?', opts:['50 km/h','60 km/h','70 km/h','80 km/h'], ans:1, trait:'Numerical' },
+      { q:'What is 15% of 200?', opts:['25','30','35','40'], ans:1, trait:'Numerical' },
+      { q:'A shopkeeper buys an item for ₹400 and sells it for ₹500. What is the profit %?', opts:['20%','25%','30%','15%'], ans:1, trait:'Numerical' },
+      { q:'If 6 workers complete a job in 8 days, how many days will 4 workers take?', opts:['10','12','14','16'], ans:1, trait:'Numerical' },
+      { q:'What comes next: 2, 4, 8, 16, __?', opts:['24','28','32','36'], ans:2, trait:'Numerical' },
+      { q:'Choose the word most similar to "ELOQUENT":', opts:['Silent','Fluent','Confused','Loud'], ans:1, trait:'Verbal' },
+      { q:'Find the odd one out: Apple, Banana, Carrot, Mango', opts:['Apple','Banana','Carrot','Mango'], ans:2, trait:'Verbal' },
+      { q:'Choose the antonym of "ANCIENT":', opts:['Old','Modern','Historical','Classical'], ans:1, trait:'Verbal' },
+      { q:'"Doctor is to Hospital" as "Teacher is to ___":', opts:['Student','School','Book','Lesson'], ans:1, trait:'Verbal' },
+      { q:'Rearrange: TOINEVNNI → This word means a new creation.', opts:['INVENTION','INTENTION','INTENSION','INVERSION'], ans:0, trait:'Verbal' },
+      { q:'All roses are flowers. Some flowers fade quickly. Therefore:', opts:['All roses fade quickly','Some roses may fade quickly','No roses fade','Flowers are roses'], ans:1, trait:'Logical' },
+      { q:'If A > B and B > C, then:', opts:['C > A','A > C','B > A','C = A'], ans:1, trait:'Logical' },
+      { q:'Complete the series: A, C, F, J, __?', opts:['M','N','O','P'], ans:2, trait:'Logical' },
+      { q:'In a row of 10, Priya is 4th from left. What position from right?', opts:['5th','6th','7th','8th'], ans:2, trait:'Logical' },
+      { q:'If Monday is 2 days after Saturday, what day is 3 days before Wednesday?', opts:['Sunday','Monday','Saturday','Friday'], ans:0, trait:'Logical' },
+      { q:'A cube has 6 faces. How many edges does a cube have?', opts:['8','10','12','14'], ans:2, trait:'Spatial' },
+      { q:'If you fold a square paper diagonally twice, what shape do you get?', opts:['Rectangle','Triangle','Pentagon','Diamond'], ans:1, trait:'Spatial' },
+      { q:'Which 3D shape has a circular base and comes to a point?', opts:['Cylinder','Sphere','Cone','Pyramid'], ans:2, trait:'Spatial' },
+      { q:'A mirror image of the letter "b" looks like:', opts:['d','p','q','b'], ans:0, trait:'Spatial' },
+      { q:'How many faces does a triangular prism have?', opts:['3','4','5','6'], ans:2, trait:'Spatial' },
+    ],
+    scoreFunc: (answers, questions) => {
+      const traits = { Numerical:0, Verbal:0, Logical:0, Spatial:0 };
+      const totals = { Numerical:0, Verbal:0, Logical:0, Spatial:0 };
+      questions.forEach((q, i) => {
+        totals[q.trait]++;
+        if (answers[i] === q.ans) traits[q.trait]++;
+      });
+      const normalised = {};
+      Object.keys(traits).forEach(t => { normalised[t] = totals[t] ? Math.round((traits[t]/totals[t])*100) : 0; });
+      const topTrait = Object.entries(normalised).sort((a,b)=>b[1]-a[1])[0][0];
+      return { topTrait, normalised };
+    }
+  }
+};
+
+/* ══════════ MODAL STATE ══════════ */
+let _testKey = '';
+let _qIndex = 0;
+let _answers = {};
+let _testQuestions = [];
+
+function openTestModal(key) {
+  if (key === 'academic') { openAcademicModal(); return; }
+  const td = TEST_DATA[key];
+  if (!td) return;
+  _testKey = key;
+  _qIndex = 0;
+  _answers = {};
+  _testQuestions = td.questions;
+
+  document.getElementById('tm-title').textContent = td.title;
+  document.getElementById('tm-sub').textContent = td.sub;
+  document.getElementById('test-modal-overlay').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  renderQuestion();
+}
+
+function closeTestModal() {
+  document.getElementById('test-modal-overlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function renderQuestion() {
+  const td = TEST_DATA[_testKey];
+  const total = _testQuestions.length;
+  const pct = Math.round((_qIndex / total) * 100);
+  document.getElementById('tm-prog').style.width = pct + '%';
+
+  const q = _testQuestions[_qIndex];
+  const opts = q.opts || td.options;
+  const isSelected = _answers[_qIndex];
+
+  const body = document.getElementById('tm-body');
+  body.innerHTML = `
+    <div class="tm-qnum">Question ${_qIndex+1} of ${total} ${q.trait ? '· ' + q.trait : ''}</div>
+    <div class="tm-q" style="margin-top:10px;">${q.q}</div>
+    <div class="tm-opts">
+      ${opts.map((o, i) => `
+        <button class="tm-opt ${isSelected === i ? 'sel' : ''}" onclick="selectAnswer(${i})">${o}</button>
+      `).join('')}
+    </div>
+    <div class="tm-nav">
+      <button class="tm-btn tm-btn-p" onclick="prevQ()" ${_qIndex === 0 ? 'style="opacity:.3;pointer-events:none;"' : ''}>← Back</button>
+      <span class="tm-qnum">${Object.keys(_answers).length} answered</span>
+      ${_qIndex < total - 1
+        ? `<button class="tm-btn tm-btn-n" id="btn-next" onclick="nextQ()" ${isSelected === undefined ? 'disabled' : ''}>Next →</button>`
+        : `<button class="tm-btn tm-btn-n" id="btn-next" onclick="submitTest()" ${isSelected === undefined ? 'disabled' : ''} style="background:linear-gradient(135deg,#10b981,#06b6d4);">Submit ✓</button>`
+      }
+    </div>`;
+}
+
+function selectAnswer(idx) {
+  _answers[_qIndex] = idx;
+  renderQuestion();
+}
+
+function nextQ() {
+  if (_answers[_qIndex] === undefined) return;
+  _qIndex++;
+  renderQuestion();
+}
+
+function prevQ() {
+  if (_qIndex > 0) { _qIndex--; renderQuestion(); }
+}
+
+function submitTest() {
+  const td = TEST_DATA[_testKey];
+  const result = td.scoreFunc(_answers, _testQuestions);
+
+  // Save to localStorage
+  const user = localStorage.getItem('cp_loggedIn_user') || 'Demo Student';
+  let scores = {};
+  try { scores = JSON.parse(localStorage.getItem('cp_scores_' + user)) || {}; } catch(e) {}
+  scores[_testKey] = result;
+  localStorage.setItem('cp_scores_' + user, JSON.stringify(scores));
+
+  document.getElementById('tm-prog').style.width = '100%';
+
+  // Show result screen
+  const traits = Object.entries(result.normalised).sort((a,b)=>b[1]-a[1]);
+  const icons = { Realistic:'🔧', Investigative:'🔬', Artistic:'🎨', Social:'🤝', Enterprising:'💼', Conventional:'📒',
+    Openness:'🌟', Conscientiousness:'✅', Extraversion:'🗣️', Agreeableness:'💚', Neuroticism:'🌊',
+    Numerical:'🔢', Verbal:'📖', Logical:'🧩', Spatial:'📐' };
+
+  document.getElementById('tm-body').innerHTML = `
+    <div class="tm-result">
+      <div class="tm-result-ico">${icons[result.topTrait] || '🏆'}</div>
+      <div class="tm-result-title">Test Complete!</div>
+      <div class="tm-result-chip">Top Trait: ${result.topTrait}</div>
+      <div class="tm-bars">
+        ${traits.map(([t, v]) => `
+          <div class="tm-bar-row">
+            <div class="tm-bar-lbl">${icons[t]||''} ${t}</div>
+            <div class="tm-bar-track"><div class="tm-bar-fill" style="width:${v}%"></div></div>
+            <div class="tm-bar-val">${v}%</div>
+          </div>`).join('')}
+      </div>
+      <button class="tm-btn tm-btn-n" onclick="closeTestModal();renderOverview(null);location.reload();" style="margin-top:8px;width:100%;">✓ Save & Return to Dashboard</button>
+    </div>`;
+
+  renderOverview(scores);
+}
+
+/* ══════════ ACADEMIC MODAL ══════════ */
+function openAcademicModal() {
+  document.getElementById('tm-title').textContent = '🎓 Academic Analysis';
+  document.getElementById('tm-sub').textContent = 'Enter your marks · 10th or 12th standard';
+  document.getElementById('tm-prog').style.width = '0%';
+  document.getElementById('test-modal-overlay').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+
+  document.getElementById('tm-body').innerHTML = `
+    <div class="acad-form">
+      <div class="acad-row">
+        <div class="acad-lbl">Standard</div>
+        <select class="acad-select" id="ac-std" onchange="updateSubjectFields()">
+          <option value="10">10th Standard</option>
+          <option value="12">12th Standard</option>
+        </select>
+      </div>
+      <div class="acad-row">
+        <div class="acad-lbl">Stream (12th)</div>
+        <select class="acad-select" id="ac-stream">
+          <option value="Science">Science (PCM/PCB)</option>
+          <option value="Commerce">Commerce</option>
+          <option value="Arts">Arts / Humanities</option>
+        </select>
+      </div>
+      <div id="ac-subjects"></div>
+      <div class="acad-row" style="margin-top:6px;">
+        <div class="acad-lbl">Overall %</div>
+        <input class="acad-inp" type="number" id="ac-avg" min="0" max="100" placeholder="e.g. 85" />
+      </div>
+    </div>
+    <div class="tm-nav" style="margin-top:22px;">
+      <button class="tm-btn tm-btn-p" onclick="closeTestModal()">Cancel</button>
+      <button class="tm-btn tm-btn-n" onclick="submitAcademic()">Submit ✓</button>
+    </div>`;
+
+  updateSubjectFields();
+}
+
+function updateSubjectFields() {
+  const std = document.getElementById('ac-std').value;
+  const subjects = std === '10'
+    ? ['Tamil/Language','English','Maths','Science','Social Science']
+    : ['English','Mathematics','Physics','Chemistry','Biology/CS/Economics'];
+  document.getElementById('ac-subjects').innerHTML = subjects.map(s =>
+    `<div class="acad-row">
+      <div class="acad-lbl">${s}</div>
+      <input class="acad-inp" type="number" min="0" max="100" placeholder="Marks (0–100)" data-sub="${s}">
+    </div>`
+  ).join('');
+}
+
+function submitAcademic() {
+  const std = document.getElementById('ac-std').value;
+  const stream = document.getElementById('ac-stream').value;
+  const avgInp = parseFloat(document.getElementById('ac-avg').value);
+  const subjects = {};
+  document.querySelectorAll('#ac-subjects input').forEach(inp => {
+    if (inp.value !== '') subjects[inp.dataset.sub] = parseInt(inp.value);
+  });
+  const subjectAvg = Object.values(subjects).length
+    ? Math.round(Object.values(subjects).reduce((a,b)=>a+b,0)/Object.values(subjects).length) : null;
+  const avg = (!isNaN(avgInp) && avgInp > 0) ? avgInp : (subjectAvg !== null ? subjectAvg : 0);
+
+  if (!avg && !Object.keys(subjects).length) {
+    alert('Please enter at least your overall percentage or subject marks!');
+    return;
+  }
+
+  const grade = avg >= 90 ? 'Outstanding 🌟' : avg >= 75 ? 'Excellent 🎉' : avg >= 60 ? 'Good 👍' : avg >= 40 ? 'Average 📝' : 'Needs Improvement';
+  const classLabel = std === '10' ? '10th Standard' : `12th (${stream})`;
+
+  const result = { std, stream: std === '12' ? stream : null, subjects, avg, grade, classLabel };
+
+  const user = localStorage.getItem('cp_loggedIn_user') || 'Demo Student';
+  let scores = {};
+  try { scores = JSON.parse(localStorage.getItem('cp_scores_' + user)) || {}; } catch(e) {}
+  scores['academic'] = result;
+  localStorage.setItem('cp_scores_' + user, JSON.stringify(scores));
+
+  document.getElementById('tm-prog').style.width = '100%';
+  document.getElementById('tm-body').innerHTML = `
+    <div class="tm-result">
+      <div class="tm-result-ico">🎓</div>
+      <div class="tm-result-title">Marks Saved!</div>
+      <div class="tm-result-chip">${classLabel} · Avg: ${avg}%</div>
+      <div class="tm-result-sub">${grade}<br>Your academic data has been saved and will be used for career analysis.</div>
+      ${Object.keys(subjects).length ? `<div class="tm-bars">${Object.entries(subjects).map(([s,v]) =>
+        `<div class="tm-bar-row"><div class="tm-bar-lbl">${s}</div><div class="tm-bar-track"><div class="tm-bar-fill" style="width:${v}%"></div></div><div class="tm-bar-val">${v}</div></div>`
+      ).join('')}</div>` : ''}
+      <button class="tm-btn tm-btn-n" onclick="closeTestModal();location.reload();" style="margin-top:8px;width:100%;">✓ Save & Return to Dashboard</button>
+    </div>`;
+
+  renderOverview(scores);
+}
+</script>
+</body>
