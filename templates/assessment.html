@@ -3924,7 +3924,7 @@
       </div>
     </div>
    function saveData(studentClass) {
-    fetch("http://127.0.0.1:8000/save/", {
+    fetch(`${window.location.origin}/save/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
