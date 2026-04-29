@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-=@z^f)%$t^!mv)!jkf-=vi!v%xf96i%r*af46*dn4q(fa!dxr3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "careerpath-ai-1-td5x.onrender.com",
+    "localhost",
+    "127.0.0.1"
+]
 
 
 # Application definition
